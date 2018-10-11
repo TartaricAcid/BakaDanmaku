@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "baka_danmaku",
+    "name": "Baka Danmaku",
+    "description": "A danmaku mod for bilibili",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "TartaricAcid"
+    ],
+    "credits": "3TUSK",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
