@@ -16,6 +16,8 @@ public class BakaDanmaku {
 
     public static final Logger logger = LogManager.getLogger(MOD_ID);
 
+    public static Thread t;
+
     @Mod.Instance(MOD_ID)
     public static BakaDanmaku INSTANCE;
 
@@ -33,7 +35,7 @@ public class BakaDanmaku {
 
     @Mod.EventHandler
     public void onLoad(FMLInitializationEvent event) {
-        Thread t = new Thread(new DanmakuThread());
+        t = new Thread(new DanmakuThread(), "BakaDanmakuThread");
         t.start();
     }
 }

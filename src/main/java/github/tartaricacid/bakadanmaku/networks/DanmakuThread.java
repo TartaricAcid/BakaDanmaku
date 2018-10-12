@@ -9,9 +9,9 @@ import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import github.tartaricacid.bakadanmaku.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.event.PopularityEvent;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextComponentString;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.Level;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class DanmakuThread implements Runnable {
     private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),");
 
     // 特殊的修饰符 volatile，用来标定是否进行连接
-    static volatile boolean keepRunning = true;
+    public static volatile boolean keepRunning = true;
 
     private static Gson gson = new Gson();
     private DataOutputStream dataOutputStream;
@@ -41,6 +41,10 @@ public class DanmakuThread implements Runnable {
     public void run() {
         // 获取真实房间 ID
         String roomID = getRoomId(BakaDanmakuConfig.room.liveRoom);
+
+        // 提示，相关房间信息已经获取
+        if (Minecraft.getMinecraft().player != null)
+            Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l直播房间 ID 已经获取，ID 为 " + roomID));
 
         try {
             // 连接
@@ -51,6 +55,10 @@ public class DanmakuThread implements Runnable {
             InputStream inputStream = socket.getInputStream();
             // 发送加入信息
             sendJoinMsg(roomID);
+
+            // 提示，已经连接
+            if (Minecraft.getMinecraft().player != null)
+                Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l弹幕机已经连接"));
 
             // 创建定时器
             Timer timer = new Timer();
@@ -87,6 +95,11 @@ public class DanmakuThread implements Runnable {
                      5：弹幕
                     */
                     if (action == 3) {
+                        // 配置管控，是否显示人气值信息
+                        if (!BakaDanmakuConfig.room.showPopularity) {
+                            continue;
+                        }
+
                         // byte 数组数据转 Int
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
@@ -125,6 +138,11 @@ public class DanmakuThread implements Runnable {
                             }
 
                             case "SEND_GIFT": {
+                                // 配置管控，是否显示礼物信息
+                                if (!BakaDanmakuConfig.room.showGift) {
+                                    continue;
+                                }
+
                                 // 莫名会为空，加个判定再进行解析
                                 if (jsonMap.get("data") == null) continue;
                                 LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
@@ -257,7 +275,12 @@ public class DanmakuThread implements Runnable {
             if (matcher.find()) {
                 realRoomId = matcher.group(1);
             } else {
-                FMLLog.log(BakaDanmaku.MOD_ID, Level.FATAL, "can not get room id");
+                // 提示，获取失败
+                if (Minecraft.getMinecraft().player != null)
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("直播房间获取失败，请检查房间 ID 是否出错"));
+
+                // 日志记录
+                BakaDanmaku.logger.fatal("can not get room id");
             }
         } catch (IOException e) {
             e.printStackTrace();
