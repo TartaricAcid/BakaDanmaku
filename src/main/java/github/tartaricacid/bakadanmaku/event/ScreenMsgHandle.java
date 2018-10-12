@@ -1,4 +1,4 @@
 package github.tartaricacid.bakadanmaku.event;
 
-public class SysMegEvent {
+public class ScreenMsgHandle {
 }
