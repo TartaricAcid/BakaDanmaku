@@ -6,11 +6,12 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.event.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.event.GiftEvent;
-import github.tartaricacid.bakadanmaku.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.event.event.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.event.event.GiftEvent;
+import github.tartaricacid.bakadanmaku.event.event.PopularityEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.io.DataOutputStream;
@@ -29,11 +30,9 @@ public class DanmakuThread implements Runnable {
     private static final String LIVE_URL = "livecmt-1.bilibili.com";
     private static final int PROT = 788;
     private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init";
-    private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),");
-
     // 特殊的修饰符 volatile，用来标定是否进行连接
     public static volatile boolean keepRunning = true;
-
+    private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),");
     private static Gson gson = new Gson();
     private DataOutputStream dataOutputStream;
 
@@ -103,8 +102,8 @@ public class DanmakuThread implements Runnable {
                         // byte 数组数据转 Int
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
-                        // 实例化 PopularityEvent
-                        new PopularityEvent(num);
+                        // Post PopularityEvent
+                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(num));
                     }
 
                     if (action == 5) {
@@ -133,8 +132,8 @@ public class DanmakuThread implements Runnable {
                                 String danmuMsg = (String) infoList.get(1);
                                 String user = (String) ((ArrayList) infoList.get(2)).get(1);
 
-                                // 实例化 DanmakuEvent
-                                new DanmakuEvent(user, danmuMsg);
+                                // Post DanmakuEvent
+                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(user, danmuMsg));
                             }
 
                             case "SEND_GIFT": {
@@ -153,11 +152,12 @@ public class DanmakuThread implements Runnable {
                                 String user = (String) dataMap.get("uname");
                                 String face = (String) dataMap.get("face");
 
-                                // 实例化 GiftEvent
-                                new GiftEvent(giftName, num, user, face);
+                                // Post GiftEvent
+                                MinecraftForge.EVENT_BUS.post(new GiftEvent(giftName, num, user, face));
                             }
 
                             case "WELCOME": {
+                                // MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
                             }
 
                             case "WELCOME_GUARD": {
