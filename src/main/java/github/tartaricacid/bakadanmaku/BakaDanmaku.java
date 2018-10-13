@@ -1,5 +1,6 @@
 package github.tartaricacid.bakadanmaku;
 
+import github.tartaricacid.bakadanmaku.api.command.CommandBakaDM;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
@@ -9,6 +10,7 @@ import github.tartaricacid.bakadanmaku.thread.BilibiliDanmakuThread;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
@@ -43,11 +45,17 @@ public class BakaDanmaku {
         }
     }
 
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandBakaDM());
+    }
+
     public static class EventHandler {
         @SubscribeEvent
         public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
             try {
                 th = DanmakuThreadFactory.getDanmakuThread(BakaDanmakuConfig.general.platform);
+                DanmakuThreadFactory.setRunningThread(th);
                 th.player = event.player;
                 t = new Thread(th, BakaDanmakuConfig.general.platform + "DanmakuThread");
                 t.start();

@@ -93,24 +93,12 @@ public class BakaDanmakuConfig {
                 // 重载配置
                 ConfigManager.sync(BakaDanmaku.MOD_ID, Config.Type.INSTANCE);
 
+                // 提示已经关闭
+                if (Minecraft.getMinecraft().player != null)
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l配置已经保存，正在重启中……"));
+
                 // 重载房间信息，单独开启一个线程，防止卡死游戏主线程
-                new Thread(() -> {
-                    BaseDanmakuThread dmThread = DanmakuThreadFactory.getDanmakuThread(general.platform);
-                    dmThread.keepRunning = false; // 关闭线程
-
-                    // 提示已经关闭
-                    if (Minecraft.getMinecraft().player != null)
-                        Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l配置已经保存，正在重启中……"));
-
-                    while (BakaDanmaku.t.isAlive()) {
-                        // 阻塞一下，防止上一个线程还没关闭，下一个线程开好了
-                    }
-
-                    dmThread.clear();
-                    dmThread.keepRunning = true; // 开启线程
-                    BakaDanmaku.t = new Thread(dmThread, general.platform + "DanmakuThread"); // 重新 new 线程
-                    BakaDanmaku.t.start(); // 启动
-                }, "BakaDanmakuChangeConfig").start();
+                new Thread(DanmakuThreadFactory::restartCurrentThread, "BakaDanmakuChangeConfig").start();
             }
         }
     }
