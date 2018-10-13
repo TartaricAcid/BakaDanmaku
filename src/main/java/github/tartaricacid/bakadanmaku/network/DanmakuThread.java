@@ -1,4 +1,4 @@
-package github.tartaricacid.bakadanmaku.networks;
+package github.tartaricacid.bakadanmaku.network;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -6,9 +6,9 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.event.event.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.event.event.GiftEvent;
-import github.tartaricacid.bakadanmaku.event.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.api.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.PopularityEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;

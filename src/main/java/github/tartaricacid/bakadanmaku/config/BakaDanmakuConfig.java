@@ -1,7 +1,7 @@
 package github.tartaricacid.bakadanmaku.config;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import github.tartaricacid.bakadanmaku.networks.DanmakuThread;
+import github.tartaricacid.bakadanmaku.network.DanmakuThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.config.Config;
@@ -34,6 +34,13 @@ public class BakaDanmakuConfig {
 
         @Config.Comment("是否显示人气值信息")
         public Boolean showPopularity = true;
+
+        @Config.Comment("是否启用在聊天栏输出弹幕信息")
+        public Boolean enableChatMsgHandler = true;
+
+        // TODO: delete the "unfinished" tag when it's okay.
+        @Config.Comment("是否启用屏幕上滚动弹幕信息（未完成）")
+        public Boolean enableScreenMsgHandler = false;
     }
 
     /**

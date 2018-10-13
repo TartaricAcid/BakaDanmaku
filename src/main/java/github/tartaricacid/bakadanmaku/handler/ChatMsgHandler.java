@@ -1,10 +1,10 @@
-package github.tartaricacid.bakadanmaku.event;
+package github.tartaricacid.bakadanmaku.handler;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.event.event.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.event.event.GiftEvent;
-import github.tartaricacid.bakadanmaku.event.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.api.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.PopularityEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = BakaDanmaku.MOD_ID)
-public class ChatMsgHandle {
+public class ChatMsgHandler {
     private static int tmpPopularityCount = 0; // 临时静态变量，缓存人气值数据，在两个事件间传递
 
     /**
