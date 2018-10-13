@@ -1,10 +1,18 @@
 package github.tartaricacid.bakadanmaku;
 
-import github.tartaricacid.bakadanmaku.networks.DanmakuThread;
+import github.tartaricacid.bakadanmaku.api.command.CommandBakaDM;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
+import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
+import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
+import github.tartaricacid.bakadanmaku.handler.ChatMsgHandler;
+import github.tartaricacid.bakadanmaku.handler.ScreenMsgHandler;
+import github.tartaricacid.bakadanmaku.thread.BilibiliDanmakuThread;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,25 +25,49 @@ public class BakaDanmaku {
     public static final Logger logger = LogManager.getLogger(MOD_ID);
 
     public static Thread t;
+    public static BaseDanmakuThread th;
 
     @Mod.Instance(MOD_ID)
     public static BakaDanmaku INSTANCE;
 
     @Mod.EventHandler
-    public void preinit(FMLPreInitializationEvent event) {
-    }
-
-    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        DanmakuThreadFactory.setDanmakuThread("bilibili", new BilibiliDanmakuThread());
+
+        MinecraftForge.EVENT_BUS.register(EventHandler.class);
+
+        if (BakaDanmakuConfig.bilibiliRoom.enableChatMsgHandler) {
+            MinecraftForge.EVENT_BUS.register(ChatMsgHandler.class);
+        }
+
+        if (BakaDanmakuConfig.bilibiliRoom.enableScreenMsgHandler) {
+            MinecraftForge.EVENT_BUS.register(ScreenMsgHandler.class);
+        }
     }
 
     @Mod.EventHandler
-    public void postinit(FMLPostInitializationEvent event) {
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandBakaDM());
     }
 
-    @Mod.EventHandler
-    public void onLoad(FMLInitializationEvent event) {
-        t = new Thread(new DanmakuThread(), "BakaDanmakuThread");
-        t.start();
+    public static class EventHandler {
+        @SubscribeEvent
+        public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+            try {
+                th = DanmakuThreadFactory.getDanmakuThread(BakaDanmakuConfig.general.platform);
+                DanmakuThreadFactory.setRunningThread(th);
+                th.player = event.player;
+                t = new Thread(th, BakaDanmakuConfig.general.platform + "DanmakuThread");
+                t.start();
+            } catch (Exception e) {
+                //TODO: Handle exception here.
+            }
+        }
+
+        @SubscribeEvent
+        public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+            th.keepRunning = false;
+            th.player = null;
+        }
     }
 }

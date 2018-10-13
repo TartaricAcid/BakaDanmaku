@@ -1,8 +1,10 @@
-package github.tartaricacid.bakadanmaku.event.event;
+package github.tartaricacid.bakadanmaku.api.event;
 
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class SysMegEvent extends Event {
+@Cancelable
+public class SysMsgEvent extends Event {
     private String msg; // 系统信息
 
     /**
@@ -10,7 +12,7 @@ public class SysMegEvent extends Event {
      *
      * @param msg 系统信息
      */
-    public SysMegEvent(String msg) {
+    public SysMsgEvent(String msg) {
         this.msg = msg;
     }
 

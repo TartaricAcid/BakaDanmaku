@@ -1,10 +1,10 @@
-package github.tartaricacid.bakadanmaku.event;
+package github.tartaricacid.bakadanmaku.handler;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.event.event.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.event.event.GiftEvent;
-import github.tartaricacid.bakadanmaku.event.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = BakaDanmaku.MOD_ID)
-public class ChatMsgHandle {
+public class ChatMsgHandler {
     private static int tmpPopularityCount = 0; // 临时静态变量，缓存人气值数据，在两个事件间传递
 
     /**
@@ -25,10 +25,10 @@ public class ChatMsgHandle {
      * @param e 发送弹幕事件
      */
     @SubscribeEvent
-    public static void sendDanmaku(DanmakuEvent e) {
+    public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.danmakuStyle, e.getUser(), e.getMsg())));
+        if (player != null && BakaDanmakuConfig.chatMsg.showDanmaku) {
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getUser(), e.getMsg())));
         }
     }
 
@@ -38,10 +38,10 @@ public class ChatMsgHandle {
      * @param e 发送礼物事件
      */
     @SubscribeEvent
-    public static void sendGift(GiftEvent e) {
+    public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
+        if (player != null && BakaDanmakuConfig.chatMsg.showGift) {
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
         }
     }
 
@@ -52,11 +52,12 @@ public class ChatMsgHandle {
      */
     @SubscribeEvent
     public static void getPopularityCount(PopularityEvent e) {
-        tmpPopularityCount = e.getNum();
+        tmpPopularityCount = e.getPopularity();
     }
 
     /**
      * 游戏界面显示人气值
+     * TODO: 取消人气值与单独 Handler 的关联
      *
      * @param e 渲染游戏界面事件
      */
@@ -66,8 +67,8 @@ public class ChatMsgHandle {
         FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
 
         // 当渲染快捷栏时候进行显示，意味着 F1 会隐藏
-        if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.room.showPopularity) {
-            gui.drawString(renderer, String.format(BakaDanmakuConfig.room.popularityStyle, String.valueOf(tmpPopularityCount)), 5, 5, 0xffffff);
+        if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.general.showPopularity) {
+            gui.drawString(renderer, String.format(BakaDanmakuConfig.general.popularityStyle, String.valueOf(tmpPopularityCount)), 5, 5, 0xffffff);
         }
     }
 }
