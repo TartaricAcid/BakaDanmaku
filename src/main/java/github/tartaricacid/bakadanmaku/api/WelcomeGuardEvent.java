@@ -1,7 +1,9 @@
-package github.tartaricacid.bakadanmaku.event.event;
+package github.tartaricacid.bakadanmaku.api;
 
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+@Cancelable
 public class WelcomeGuardEvent extends Event {
     private String user; // 房管加入房间
 

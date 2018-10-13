@@ -1,7 +1,9 @@
-package github.tartaricacid.bakadanmaku.event.event;
+package github.tartaricacid.bakadanmaku.api;
 
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+@Cancelable
 public class DanmakuEvent extends Event {
     private String user; // 发送弹幕的玩家名称
     private String msg; // 发送的弹幕

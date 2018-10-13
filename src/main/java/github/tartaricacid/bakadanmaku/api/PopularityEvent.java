@@ -1,11 +1,9 @@
-package github.tartaricacid.bakadanmaku.event.event;
+package github.tartaricacid.bakadanmaku.api;
 
-import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = BakaDanmaku.MOD_ID)
+@Cancelable
 public class PopularityEvent extends Event {
     private int num; // 人气值
 
