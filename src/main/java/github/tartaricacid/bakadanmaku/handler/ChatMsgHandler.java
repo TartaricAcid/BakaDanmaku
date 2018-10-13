@@ -25,7 +25,7 @@ public class ChatMsgHandler {
      * @param e 发送弹幕事件
      */
     @SubscribeEvent
-    public static void sendDanmaku(DanmakuEvent e) {
+    public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
             player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.danmakuStyle, e.getUser(), e.getMsg())));
@@ -38,7 +38,7 @@ public class ChatMsgHandler {
      * @param e 发送礼物事件
      */
     @SubscribeEvent
-    public static void sendGift(GiftEvent e) {
+    public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null) {
             player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
@@ -52,7 +52,7 @@ public class ChatMsgHandler {
      */
     @SubscribeEvent
     public static void getPopularityCount(PopularityEvent e) {
-        tmpPopularityCount = e.getNum();
+        tmpPopularityCount = e.getPopularity();
     }
 
     /**

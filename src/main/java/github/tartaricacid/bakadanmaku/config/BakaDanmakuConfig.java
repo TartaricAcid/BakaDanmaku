@@ -15,6 +15,9 @@ public class BakaDanmakuConfig {
     @Config.Name("房间与弹幕配置")
     public static Room room = new Room();
 
+    @Config.Name("网络配置")
+    public static Network network = new Network();
+
     public static class Room {
         @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
         @Config.RangeInt(min = 0)
@@ -41,6 +44,22 @@ public class BakaDanmakuConfig {
         // TODO: delete the "unfinished" tag when it's okay.
         @Config.Comment("是否启用屏幕上滚动弹幕信息（未完成）")
         public Boolean enableScreenMsgHandler = false;
+    }
+
+    public static class Network {
+        @Config.Comment("测试网络连通性时的超时时间")
+        public int timeout = 3000;
+
+        @Config.Comment("连接失败后重连的次数")
+        public int retry = 10;
+
+        @Config.Comment("连接失败后的重连间隔，单位毫秒；0代表不重连，直接退出")
+        @Config.RangeInt(min = 0)
+        public int retryInterval = 5000;
+    }
+
+    public static class ChatMsg {
+        //
     }
 
     /**

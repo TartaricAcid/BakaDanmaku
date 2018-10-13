@@ -5,18 +5,18 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
 public class PopularityEvent extends Event {
-    private int num; // 人气值
+    private int popularity; // 人气值
 
     /**
      * 获取人气值事件
      *
-     * @param num 人气值
+     * @param popularity 人气值
      */
-    public PopularityEvent(int num) {
-        this.num = num;
+    public PopularityEvent(int popularity) {
+        this.popularity = popularity;
     }
 
-    public int getNum() {
-        return num;
+    public int getPopularity() {
+        return popularity;
     }
 }
