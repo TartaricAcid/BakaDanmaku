@@ -157,6 +157,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                                 // Post DanmakuEvent
                                 MinecraftForge.EVENT_BUS.post(new DanmakuEvent(user, danmuMsg));
+                                break;
                             }
 
                             case "SEND_GIFT": {
@@ -177,19 +178,23 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                                 // Post GiftEvent
                                 MinecraftForge.EVENT_BUS.post(new GiftEvent(giftName, num, user, face));
+                                break;
                             }
 
                             case "WELCOME": {
                                 //TODO: Emit WelcomeEvent
                                 // MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
+                                break;
                             }
 
                             case "WELCOME_GUARD": {
                                 //TODO: Emit WelcomeGuardEvent
+                                break;
                             }
 
                             case "SYS_MSG": {
                                 //TODO: Emit SysMsgEvent
+                                break;
                             }
 
                             default: {
