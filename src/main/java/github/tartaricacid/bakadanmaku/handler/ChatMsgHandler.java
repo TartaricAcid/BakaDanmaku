@@ -27,8 +27,8 @@ public class ChatMsgHandler {
     @SubscribeEvent
     public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.danmakuStyle, e.getUser(), e.getMsg())));
+        if (player != null && BakaDanmakuConfig.chatMsg.showDanmaku) {
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getUser(), e.getMsg())));
         }
     }
 
@@ -40,8 +40,8 @@ public class ChatMsgHandler {
     @SubscribeEvent
     public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player != null) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.room.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
+        if (player != null && BakaDanmakuConfig.chatMsg.showGift) {
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
         }
     }
 
@@ -57,6 +57,7 @@ public class ChatMsgHandler {
 
     /**
      * 游戏界面显示人气值
+     * TODO: 取消人气值与单独 Handler 的关联
      *
      * @param e 渲染游戏界面事件
      */
@@ -66,8 +67,8 @@ public class ChatMsgHandler {
         FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
 
         // 当渲染快捷栏时候进行显示，意味着 F1 会隐藏
-        if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.room.showPopularity) {
-            gui.drawString(renderer, String.format(BakaDanmakuConfig.room.popularityStyle, String.valueOf(tmpPopularityCount)), 5, 5, 0xffffff);
+        if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.general.showPopularity) {
+            gui.drawString(renderer, String.format(BakaDanmakuConfig.general.popularityStyle, String.valueOf(tmpPopularityCount)), 5, 5, 0xffffff);
         }
     }
 }

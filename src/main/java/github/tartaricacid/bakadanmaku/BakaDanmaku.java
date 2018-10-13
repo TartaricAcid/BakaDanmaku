@@ -34,11 +34,11 @@ public class BakaDanmaku {
 
         MinecraftForge.EVENT_BUS.register(EventHandler.class);
 
-        if (BakaDanmakuConfig.room.enableChatMsgHandler) {
+        if (BakaDanmakuConfig.bilibiliRoom.enableChatMsgHandler) {
             MinecraftForge.EVENT_BUS.register(ChatMsgHandler.class);
         }
 
-        if (BakaDanmakuConfig.room.enableScreenMsgHandler) {
+        if (BakaDanmakuConfig.bilibiliRoom.enableScreenMsgHandler) {
             MinecraftForge.EVENT_BUS.register(ScreenMsgHandler.class);
         }
     }

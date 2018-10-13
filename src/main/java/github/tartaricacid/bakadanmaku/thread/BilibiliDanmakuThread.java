@@ -41,7 +41,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     public boolean preRunCheck() {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
-        if (BakaDanmakuConfig.room.liveRoom == 0) {
+        if (BakaDanmakuConfig.bilibiliRoom.liveRoom == 0) {
             if (player != null) {
                 player.sendMessage(new TextComponentString("§8§l直播房间 ID 未设置，弹幕机已停止工作！ "));
                 check = false;
@@ -60,7 +60,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     @Override
     public void doRun() {
         // 获取真实房间 ID
-        String roomID = getRoomId(BakaDanmakuConfig.room.liveRoom);
+        String roomID = getRoomId(BakaDanmakuConfig.bilibiliRoom.liveRoom);
 
         // 提示，相关房间信息已经获取
         sendChatMessage("§8§l直播房间 ID 已经获取，ID 为 " + roomID);
@@ -114,7 +114,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                     */
                     if (action == 3) {
                         // 配置管控，是否显示人气值信息
-                        if (!BakaDanmakuConfig.room.showPopularity) {
+                        if (!BakaDanmakuConfig.general.showPopularity) {
                             continue;
                         }
 
@@ -145,6 +145,10 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
+                                // 配置管控，是否显示弹幕
+                                if (!BakaDanmakuConfig.bilibiliRoom.showDanmaku) {
+                                    continue;
+                                }
                                 ArrayList infoList = (ArrayList) jsonMap.get("info");
 
                                 // 具体的发送者和信息
@@ -157,7 +161,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                             case "SEND_GIFT": {
                                 // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.room.showGift) {
+                                if (!BakaDanmakuConfig.bilibiliRoom.showGift) {
                                     continue;
                                 }
 
