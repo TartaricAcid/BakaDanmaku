@@ -1,7 +1,8 @@
 package github.tartaricacid.bakadanmaku.config;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import github.tartaricacid.bakadanmaku.network.DanmakuThread;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
+import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.config.Config;
@@ -17,6 +18,14 @@ public class BakaDanmakuConfig {
 
     @Config.Name("网络配置")
     public static Network network = new Network();
+
+    @Config.Comment("通用设置")
+    public static General general = new General();
+
+    public static class General {
+        @Config.Comment("直播平台选择")
+        public String platform = "bilibili";
+    }
 
     public static class Room {
         @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
@@ -75,7 +84,8 @@ public class BakaDanmakuConfig {
 
                 // 重载房间信息，单独开启一个线程，防止卡死游戏主线程
                 new Thread(() -> {
-                    DanmakuThread.keepRunning = false; // 关闭线程
+                    BaseDanmakuThread dmThread = DanmakuThreadFactory.getDanmakuThread(general.platform);
+                    dmThread.keepRunning = false; // 关闭线程
 
                     // 提示已经关闭
                     if (Minecraft.getMinecraft().player != null)
@@ -84,8 +94,10 @@ public class BakaDanmakuConfig {
                     while (BakaDanmaku.t.isAlive()) {
                         // 阻塞一下，防止上一个线程还没关闭，下一个线程开好了
                     }
-                    DanmakuThread.keepRunning = true; // 开启线程
-                    BakaDanmaku.t = new Thread(new DanmakuThread(), "BakaDanmakuThread"); // 重新 new 线程
+
+                    dmThread.clear();
+                    dmThread.keepRunning = true; // 开启线程
+                    BakaDanmaku.t = new Thread(dmThread, general.platform + "DanmakuThread"); // 重新 new 线程
                     BakaDanmaku.t.start(); // 启动
                 }, "BakaDanmakuChangeConfig").start();
             }

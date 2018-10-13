@@ -2,9 +2,9 @@ package github.tartaricacid.bakadanmaku.handler;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.api.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.api.GiftEvent;
-import github.tartaricacid.bakadanmaku.api.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;

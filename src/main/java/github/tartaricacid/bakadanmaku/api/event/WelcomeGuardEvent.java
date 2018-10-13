@@ -1,4 +1,4 @@
-package github.tartaricacid.bakadanmaku.api;
+package github.tartaricacid.bakadanmaku.api.event;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;

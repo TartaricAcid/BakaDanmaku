@@ -1,16 +1,15 @@
-package github.tartaricacid.bakadanmaku.network;
+package github.tartaricacid.bakadanmaku.thread;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import github.tartaricacid.bakadanmaku.api.DanmakuEvent;
-import github.tartaricacid.bakadanmaku.api.GiftEvent;
-import github.tartaricacid.bakadanmaku.api.PopularityEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
+import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.RandomUtils;
@@ -28,46 +27,43 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DanmakuThread implements Runnable {
+public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private static final String LIVE_URL = "livecmt-1.bilibili.com";
     private static final int PORT = 788;
     private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init";
-
-    // 特殊的修饰符 volatile，用来标定是否进行连接
-    public static volatile boolean keepRunning = true;
-    public static volatile EntityPlayer player = null;
 
     private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),");
     private static Gson gson = new Gson();
 
     private DataOutputStream dataOutputStream;
-    private int retryCounter = BakaDanmakuConfig.network.retry;
 
     @Override
-    public void run() {
-        if (Minecraft.getMinecraft().player != null)
-            player = Minecraft.getMinecraft().player;
-
+    public boolean preRunCheck() {
+        boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
         if (BakaDanmakuConfig.room.liveRoom == 0) {
             if (player != null) {
                 player.sendMessage(new TextComponentString("§8§l直播房间 ID 未设置，弹幕机已停止工作！ "));
-                return;
+                check = false;
             }
         }
 
         // 检查网络连通性
         while (!isReachable()) {
-            if ((retryCounter <= 0) || (BakaDanmakuConfig.network.retryInterval == 0)) return;
+            if ((retryCounter <= 0) || (BakaDanmakuConfig.network.retryInterval == 0)) check = false;
             waitForRetryInterval();
         }
 
+        return check;
+    }
+
+    @Override
+    public void doRun() {
         // 获取真实房间 ID
         String roomID = getRoomId(BakaDanmakuConfig.room.liveRoom);
 
         // 提示，相关房间信息已经获取
-        if (player != null)
-            player.sendMessage(new TextComponentString("§8§l直播房间 ID 已经获取，ID 为 " + roomID));
+        sendChatMessage("§8§l直播房间 ID 已经获取，ID 为 " + roomID);
 
         try {
             // 连接
@@ -80,8 +76,7 @@ public class DanmakuThread implements Runnable {
             sendJoinMsg(roomID);
 
             // 提示，已经连接
-            if (player != null)
-                player.sendMessage(new TextComponentString("§8§l弹幕机已经连接"));
+            sendChatMessage("§8§l弹幕机已经连接");
 
             // 创建定时器
             Timer timer = new Timer();
@@ -210,6 +205,11 @@ public class DanmakuThread implements Runnable {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    @Override
+    public void clear() {
+        gson = new Gson();
     }
 
     /**
