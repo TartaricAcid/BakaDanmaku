@@ -1,7 +1,6 @@
 package github.tartaricacid.bakadanmaku.config;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
@@ -33,26 +32,13 @@ public class BakaDanmakuConfig {
         public Boolean showPopularity = true;
 
         @Config.Comment("显示的人气值格式，注意格式符")
-        public String popularityStyle = "§2§l人气值§f§r：§f§l%1$s";
+        public String popularityStyle = "§6§l人气值: %1$s";
     }
 
     public static class BilibiliRoom {
         @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
         @Config.RangeInt(min = 0)
         public int liveRoom = 0;
-
-        @Config.Comment("是否显示弹幕")
-        public Boolean showDanmaku = true;
-
-        @Config.Comment("是否显示礼物信息")
-        public Boolean showGift = true;
-
-        @Config.Comment("是否启用在聊天栏输出弹幕信息")
-        public Boolean enableChatMsgHandler = true;
-
-        // TODO: delete the "unfinished" tag when it's okay.
-        @Config.Comment("是否启用屏幕上滚动弹幕信息（未完成）")
-        public Boolean enableScreenMsgHandler = false;
     }
 
     public static class ChatMsg {
@@ -60,13 +46,19 @@ public class BakaDanmakuConfig {
         public Boolean showDanmaku = true;
 
         @Config.Comment("发送的弹幕信息格式，注意格式符")
-        public String danmakuStyle = "§f§r[§2§lbilibili§f§r] §6§l%1$s：§f§l%2$s";
+        public String danmakuStyle = "§f§l[§8§l弹幕§f§l] §6§l%1$s: §f§l%2$s";
 
         @Config.Comment("是否显示礼物信息")
         public Boolean showGift = true;
 
         @Config.Comment("发送的礼物信息格式，注意格式符")
-        public String giftStyle = "§f§r[§2§lbilibili§f§r] §8§l%1$s：%2$sx%3$d";
+        public String giftStyle = "§f§l[§8§l礼物§f§l] §8§l%1$s: %2$sx%3$d";
+
+        @Config.Comment("是否显示老爷信息")
+        public Boolean showWelcome = true;
+
+        @Config.Comment("发送的老爷欢迎信息格式，注意格式符")
+        public String welcomeStyle = "§f§l欢迎 %1$s 老爷加入直播间";
     }
 
     public static class Network {

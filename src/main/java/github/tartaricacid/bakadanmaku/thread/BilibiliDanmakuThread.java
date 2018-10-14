@@ -8,6 +8,7 @@ import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraft.util.text.TextComponentString;
@@ -157,7 +158,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         switch (msgType) {
                             case "DANMU_MSG": {
                                 // 配置管控，是否显示弹幕
-                                if (!BakaDanmakuConfig.bilibiliRoom.showDanmaku) {
+                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
                                     continue;
                                 }
                                 ArrayList infoList = (ArrayList) jsonMap.get("info");
@@ -173,7 +174,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                             case "SEND_GIFT": {
                                 // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.bilibiliRoom.showGift) {
+                                if (!BakaDanmakuConfig.chatMsg.showGift) {
                                     continue;
                                 }
 
@@ -193,8 +194,18 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "WELCOME": {
-                                //TODO: Emit WelcomeEvent
-                                // MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
+                                // 配置管控，是否显示礼物信息
+                                if (!BakaDanmakuConfig.chatMsg.showWelcome) {
+                                    break;
+                                }
+
+                                LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
+
+                                // 具体的送礼信息
+                                String user = (String) dataMap.get("uname");
+
+                                // Post WelcomeEvent
+                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
                                 break;
                             }
 
@@ -212,7 +223,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
                         }
                     }
-                } catch (JsonSyntaxException joe) {
+                } catch (JsonSyntaxException | NumberFormatException eIn) {
                     // 送礼数据解析可能会出现异常，捕捉一下
                 } catch (Exception e) {
                     e.printStackTrace();
