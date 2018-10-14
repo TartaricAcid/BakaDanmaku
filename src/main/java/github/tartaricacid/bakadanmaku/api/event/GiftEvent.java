@@ -4,40 +4,83 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class GiftEvent extends Event {
-    private String giftName; // 礼物名称
-    private int num; // 礼物数量
-    private String user; // 送礼玩家名称
-    private String face; // 送礼玩家头像的 URL
+public class GiftEvent extends BakaDanmakuEvent {
+    private Gift gift;
 
     /**
      * 发送礼物事件
      *
-     * @param giftName 礼物名称
-     * @param num      礼物数量
-     * @param user     用户名
-     * @param face     用户头像 url
+     * @param gift 礼物对象
      */
-    public GiftEvent(String giftName, int num, String user, String face) {
-        this.giftName = giftName;
-        this.num = num;
-        this.user = user;
-        this.face = face;
+    public GiftEvent(Gift gift) {
+        super();
+        this.gift = gift;
     }
 
-    public String getGiftName() {
-        return giftName;
+    public GiftEvent(Gift gift, String platform) {
+        super(platform);
+        this.gift = gift;
     }
 
-    public int getNum() {
-        return num;
+    public Gift getGift() {
+        return gift;
     }
 
-    public String getUser() {
-        return user;
-    }
+    public static class Gift {
 
-    public String getFace() {
-        return face;
+        /**
+         * 礼物名称
+         */
+        private String giftName;
+
+        /**
+         * 礼物数量
+         */
+        private int num;
+
+        /**
+         * 赠送人
+         */
+        private String user;
+
+        /**
+         * 赠送者头像的 URL
+         */
+        private String face;
+
+        public Gift(String giftName, int num, String user, String face) {
+            this.giftName = giftName;
+            this.num = num;
+            this.user = user;
+            this.face = face;
+        }
+
+        /**
+         * 构建一个 Gift 对象
+         *
+         * @param giftName 礼物名称
+         * @param num      礼物数量
+         * @param user     赠送人
+         * @param face     赠送者头像的 URL
+         */
+        public static Gift builder(String giftName, int num, String user, String face) {
+            return new Gift(giftName, num, user, face);
+        }
+
+        public String getGiftName() {
+            return giftName;
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public String getFace() {
+            return face;
+        }
     }
 }

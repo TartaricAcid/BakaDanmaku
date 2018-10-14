@@ -1,82 +1,101 @@
 package github.tartaricacid.bakadanmaku.api.thread;
 
-import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DanmakuThreadFactory {
     // 存储弹幕线程的 HashMap
     private static final HashMap<String, BaseDanmakuThread> danmakuThreads = new HashMap<>();
-
-    // 正在运行的弹幕线程
-    private static BaseDanmakuThread runningThread;
+    private static final HashMap<String, Thread> realDanmakuThreads = new HashMap<>();
 
     /**
-     * 存入弹幕线程
+     * 向 danmakuThreads 中添加新的 DanmakuThread 类型
+     * 通常在 Mod 的 init 阶段使用
      *
-     * @param name   弹幕线程所属平台名称
-     * @param thread 具体需要存入的弹幕线程
+     * @param name   DanmakuThread 的名称
+     * @param thread DanmakuThread 的实例
      */
     public static void setDanmakuThread(String name, BaseDanmakuThread thread) {
         danmakuThreads.put(name, thread);
     }
 
     /**
-     * 获取 HashMap 中存储的弹幕线程
+     * 获得指定平台的 DanmakuThread
      *
-     * @param platform 弹幕线程所属平台名称
-     * @return 对应的弹幕线程
+     * @param platform 平台名
+     * @return BaseDanmakuThread 实例
      */
     public static BaseDanmakuThread getDanmakuThread(String platform) {
-        return danmakuThreads.get(platform);
+        return danmakuThreads.getOrDefault(platform, null);
     }
 
     /**
-     * 设置正在运行的弹幕线程
+     * 获得当前正在运行的线程
      *
-     * @param thread 需要设置的正在运行的弹幕线程
+     * @return 当前正在运行的线程
      */
-    public static void setRunningThread(BaseDanmakuThread thread) {
-        runningThread = thread;
+    public static ArrayList<String> getRunningDanmakuThread() {
+        return new ArrayList<>(realDanmakuThreads.keySet());
     }
 
     /**
-     * 获取正在运行的弹幕线程
+     * 启动指定平台的 DanmakuThread
      *
-     * @return 正在运行的弹幕线程
+     * @param platform 平台名
      */
-    public static BaseDanmakuThread getRunningDanmakuThread() {
-        return runningThread;
-    }
-
-    /**
-     * 重载当前线程
-     */
-    public static void restartCurrentThread() {
-        // 先获取当前运行的弹幕线程
-        BaseDanmakuThread runningThread = getRunningDanmakuThread();
-
-        // 从配置文件读取平台，获取到对应平台的弹幕线程
-        BaseDanmakuThread dmThread = DanmakuThreadFactory.getDanmakuThread(BakaDanmakuConfig.general.platform);
-
-        // 关闭正在运行的弹幕线程
-        runningThread.keepRunning = false;
-
-        while (BakaDanmaku.t.isAlive()) {
-            // 阻塞一下，防止上一个线程还没关闭，下一个线程开好了
-        }
-
-        // 使用之前先清空
-        dmThread.clear();
-
-        // 重设线程开始标识符
+    public static void runThread(String platform) {
+        BaseDanmakuThread dmThread = getDanmakuThread(platform);
         dmThread.keepRunning = true;
 
-        // 重新 new 线程
-        BakaDanmaku.t = new Thread(dmThread, BakaDanmakuConfig.general.platform + "DanmakuThread");
+        Thread threadToRun = new Thread(dmThread, platform + "DanmakuThread");
+        threadToRun.start();
 
-        // 启动
-        BakaDanmaku.t.start();
+        realDanmakuThreads.put(platform, threadToRun);
+    }
+
+    /**
+     * 停止指定平台的 DanmakuThread
+     *
+     * @param platform 平台名
+     */
+    public static void stopThread(String platform) {
+        BaseDanmakuThread th = getDanmakuThread(platform);
+
+        if (platform != null) {
+            th.keepRunning = false; // 关闭线程
+            while (realDanmakuThreads.get(platform).isAlive()) ;
+            th.clear(); // 清空线程
+        }
+    }
+
+    /**
+     * 停止现在正在运行的所有 DanmakuThread
+     */
+    public static void stopAllThreads() {
+        realDanmakuThreads.forEach((platform, thread) -> {
+            stopThread(platform);
+        });
+    }
+
+    /**
+     * 判断指定 platform 的 DanmakuThread 是否正在运行
+     *
+     * @param platform 平台名
+     * @return 指定 platform 的 DanmakuThread 是否正在运行
+     */
+    public static boolean isThreadRunning(String platform) {
+        return realDanmakuThreads.containsKey(platform);
+    }
+
+    /**
+     * 重启所有线程 同样可以用于初始化时线程的启动
+     */
+    public static void restartThreads() {
+        getRunningDanmakuThread().forEach(DanmakuThreadFactory::stopThread);
+        for (String p : BakaDanmakuConfig.general.platform.split(",")) {
+            runThread(p.trim());
+        }
     }
 }
