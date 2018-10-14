@@ -169,7 +169,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) ((ArrayList) infoList.get(2)).get(1);
 
                                 // Post DanmakuEvent
-                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(DanmakuEvent.Danmaku.builder(user, danmuMsg)));
+                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(DanmakuEvent.Danmaku.builder(user, danmuMsg), BakaDanmakuConfig.bilibiliRoom.platformDisplayName));
                                 break;
                             }
 
@@ -190,7 +190,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String face = (String) dataMap.get("face");
 
                                 // Post GiftEvent
-                                MinecraftForge.EVENT_BUS.post(new GiftEvent(GiftEvent.Gift.builder(giftName, num, user, face)));
+                                MinecraftForge.EVENT_BUS.post(new GiftEvent(GiftEvent.Gift.builder(giftName, num, user, face), BakaDanmakuConfig.bilibiliRoom.platformDisplayName));
                                 break;
                             }
 

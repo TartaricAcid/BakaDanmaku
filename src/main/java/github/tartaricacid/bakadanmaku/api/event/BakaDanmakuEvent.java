@@ -15,6 +15,6 @@ public abstract class BakaDanmakuEvent extends Event {
     }
 
     public BakaDanmakuEvent() {
-        this(BakaDanmakuConfig.general.platform);
+        this("UNKNOWN");
     }
 }
