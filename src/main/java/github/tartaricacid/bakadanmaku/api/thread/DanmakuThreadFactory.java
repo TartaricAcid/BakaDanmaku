@@ -1,5 +1,6 @@
 package github.tartaricacid.bakadanmaku.api.thread;
 
+import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 
 import java.util.ArrayList;
@@ -47,12 +48,20 @@ public class DanmakuThreadFactory {
      */
     public static void runThread(String platform) {
         BaseDanmakuThread dmThread = getDanmakuThread(platform);
-        dmThread.keepRunning = true;
 
-        Thread threadToRun = new Thread(dmThread, platform + "DanmakuThread");
-        threadToRun.start();
+        if (dmThread != null) {
+            dmThread.keepRunning = true;
 
-        realDanmakuThreads.put(platform, threadToRun);
+            Thread threadToRun = new Thread(dmThread, platform + "DanmakuThread");
+            threadToRun.start();
+
+            realDanmakuThreads.put(platform, threadToRun);
+        } else {
+            BakaDanmaku.logger.error("平台 [" + platform + "] 不存在！请检查配置文件或已安装 Mod！");
+            // TODO: 红色字体
+            BaseDanmakuThread.sendChatMessage("弹幕姬错误：");
+            BaseDanmakuThread.sendChatMessage("平台 [" + platform + "] 不存在！请检查配置文件或已安装 Mod！");
+        }
     }
 
     /**
@@ -63,7 +72,7 @@ public class DanmakuThreadFactory {
     public static void stopThread(String platform) {
         BaseDanmakuThread th = getDanmakuThread(platform);
 
-        if (platform != null) {
+        if (th != null) {
             th.keepRunning = false; // 关闭线程
             while (realDanmakuThreads.get(platform).isAlive()) ;
             th.clear(); // 清空线程
