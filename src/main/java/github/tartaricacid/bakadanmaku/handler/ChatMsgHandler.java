@@ -28,7 +28,7 @@ public class ChatMsgHandler {
     public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BakaDanmakuConfig.chatMsg.showDanmaku) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getUser(), e.getMsg())));
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getPlatform(), e.getDanmaku().getUser(), e.getDanmaku().getMsg())));
         }
     }
 
@@ -41,7 +41,7 @@ public class ChatMsgHandler {
     public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BakaDanmakuConfig.chatMsg.showGift) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getUser(), e.getGiftName(), e.getNum())));
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getPlatform(), e.getGift().getUser(), e.getGift().getGiftName(), e.getGift().getNum())));
         }
     }
 

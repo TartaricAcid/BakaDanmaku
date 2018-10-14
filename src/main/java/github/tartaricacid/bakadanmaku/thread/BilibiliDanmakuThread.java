@@ -5,12 +5,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
-import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
-import net.minecraft.util.text.TextComponentString;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
+import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -21,6 +20,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,10 +42,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
         if (BakaDanmakuConfig.bilibiliRoom.liveRoom == 0) {
-            if (player != null) {
-                player.sendMessage(new TextComponentString("§8§l直播房间 ID 未设置，弹幕机已停止工作！ "));
-                check = false;
-            }
+            sendChatMessage("§8§l直播房间 ID 未设置，弹幕机已停止工作！ ");
+            check = false;
         }
 
         // 检查网络连通性
@@ -156,7 +154,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) ((ArrayList) infoList.get(2)).get(1);
 
                                 // Post DanmakuEvent
-                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(user, danmuMsg));
+                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(DanmakuEvent.Danmaku.builder(user, danmuMsg)));
                                 break;
                             }
 
@@ -177,7 +175,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String face = (String) dataMap.get("face");
 
                                 // Post GiftEvent
-                                MinecraftForge.EVENT_BUS.post(new GiftEvent(giftName, num, user, face));
+                                MinecraftForge.EVENT_BUS.post(new GiftEvent(GiftEvent.Gift.builder(giftName, num, user, face)));
                                 break;
                             }
 
@@ -210,7 +208,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
             socket.close(); // 关闭 socket
             timer.cancel(); // 关闭心跳包线程的定时器
-            player = null; // 将 player 手动设置为 null
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -313,7 +310,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
             InputStream con = url.openStream();
 
             // 按照 UTF-8 编码解析
-            String data = new String(ByteStreams.toByteArray(con), "UTF-8");
+            String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
 
             // 关闭数据流
             con.close();
@@ -324,8 +321,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                 realRoomId = matcher.group(1);
             } else {
                 // 提示，获取失败
-                if (player != null)
-                    player.sendMessage(new TextComponentString("直播房间获取失败，请检查房间 ID 是否出错"));
+                sendChatMessage("直播房间获取失败，请检查房间 ID 是否出错");
 
                 // 日志记录
                 BakaDanmaku.logger.fatal("Cannot get room id.");

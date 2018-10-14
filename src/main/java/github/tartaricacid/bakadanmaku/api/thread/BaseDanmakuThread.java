@@ -1,8 +1,8 @@
 package github.tartaricacid.bakadanmaku.api.thread;
 
+import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 
 public abstract class BaseDanmakuThread implements Runnable {
@@ -10,7 +10,6 @@ public abstract class BaseDanmakuThread implements Runnable {
 
     // 特殊的修饰符 volatile，用来标定是否进行连接
     public volatile boolean keepRunning = true;
-    public volatile EntityPlayer player = null;
 
     @Override
     public void run() {
@@ -20,7 +19,7 @@ public abstract class BaseDanmakuThread implements Runnable {
 
     public boolean preRunCheck() {
         if (Minecraft.getMinecraft().player != null)
-            player = Minecraft.getMinecraft().player;
+            BakaDanmaku.player = Minecraft.getMinecraft().player;
         return true;
     }
 
@@ -28,8 +27,8 @@ public abstract class BaseDanmakuThread implements Runnable {
 
     public abstract void clear();
 
-    protected void sendChatMessage(String text) {
-        if (player != null)
-            player.sendMessage(new TextComponentString(text));
+    public static void sendChatMessage(String text) {
+        if (BakaDanmaku.player != null)
+            BakaDanmaku.player.sendMessage(new TextComponentString(text));
     }
 }

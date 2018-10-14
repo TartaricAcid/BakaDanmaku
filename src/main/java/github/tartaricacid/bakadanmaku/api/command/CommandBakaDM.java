@@ -1,12 +1,11 @@
 package github.tartaricacid.bakadanmaku.api.command;
 
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
 public class CommandBakaDM extends CommandBase {
     public static final String commandBakaDanmaku = "bakadm";
@@ -34,10 +33,8 @@ public class CommandBakaDM extends CommandBase {
         }
         switch (args[0]) {
             case "reload": {
-                if (Minecraft.getMinecraft().player != null)
-                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l正在重启中……"));
-
-                DanmakuThreadFactory.restartCurrentThread();
+                BaseDanmakuThread.sendChatMessage("§8§l正在重启中……");
+                DanmakuThreadFactory.restartThreads();
                 break;
             }
             default:
