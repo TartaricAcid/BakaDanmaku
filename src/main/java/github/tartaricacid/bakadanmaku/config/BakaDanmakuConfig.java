@@ -63,13 +63,13 @@ public class BakaDanmakuConfig {
         public Boolean showDanmaku = true;
 
         @Config.Comment("发送的弹幕信息格式，注意格式符")
-        public String danmakuStyle = "§f§r[§2§%1§f§r] §6§l%2$s：§f§l%3$s";
+        public String danmakuStyle = "§f§r[§2§%1$s§f§r] §6§l%2$s：§f§l%3$s";
 
         @Config.Comment("是否显示礼物信息")
         public Boolean showGift = true;
 
         @Config.Comment("发送的礼物信息格式，注意格式符")
-        public String giftStyle = "§f§r[§2§%1§f§r] §8§l%2$s：%3$sx%4$d";
+        public String giftStyle = "§f§r[§2§%1$s§f§r] §8§l%2$s：%3$sx%4$d";
     }
 
     public static class Network {
