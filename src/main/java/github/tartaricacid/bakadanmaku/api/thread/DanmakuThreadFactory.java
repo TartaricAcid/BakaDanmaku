@@ -94,7 +94,7 @@ public class DanmakuThreadFactory {
     public static void restartThreads() {
         getRunningDanmakuThread().forEach(DanmakuThreadFactory::stopThread);
         for (String p : BakaDanmakuConfig.general.platform.split(",")) {
-            runThread(p);
+            runThread(p.trim());
         }
     }
 }
