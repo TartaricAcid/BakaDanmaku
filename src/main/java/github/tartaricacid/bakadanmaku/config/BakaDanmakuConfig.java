@@ -1,6 +1,7 @@
 package github.tartaricacid.bakadanmaku.config;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
@@ -97,11 +98,13 @@ public class BakaDanmakuConfig {
                 ConfigManager.sync(BakaDanmaku.MOD_ID, Config.Type.INSTANCE);
 
                 // 提示已经关闭
-                if (Minecraft.getMinecraft().player != null)
-                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§8§l配置已经保存，正在重启中……"));
+                if(BakaDanmaku.player != null){
+                    // 提示信息
+                    BaseDanmakuThread.sendChatMessage("§8§l配置已经保存，正在重启中……");
 
-                // 重载房间信息，单独开启一个线程，防止卡死游戏主线程
-                new Thread(DanmakuThreadFactory::restartThreads, "BakaDanmakuChangeConfig").start();
+                    // 重载房间信息，单独开启一个线程，防止卡死游戏主线程
+                    new Thread(DanmakuThreadFactory::restartThreads, "BakaDanmakuChangeConfig").start();
+                }
             }
         }
     }
