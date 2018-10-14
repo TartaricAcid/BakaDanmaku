@@ -1,6 +1,5 @@
 package github.tartaricacid.bakadanmaku.api.event;
 
-import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class BakaDanmakuEvent extends Event {
@@ -12,9 +11,5 @@ public abstract class BakaDanmakuEvent extends Event {
 
     public String getPlatform() {
         return platform;
-    }
-
-    public BakaDanmakuEvent() {
-        this("UNKNOWN");
     }
 }

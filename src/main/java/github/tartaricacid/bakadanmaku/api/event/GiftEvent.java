@@ -5,82 +5,41 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
 public class GiftEvent extends BakaDanmakuEvent {
-    private Gift gift;
+    private String giftName; // 礼物名称
+    private int num; // 礼物数量
+    private String user; // 赠送人
+    private String face; // 赠送者头像的 URL
 
     /**
      * 发送礼物事件
      *
-     * @param gift 礼物对象
+     * @param platform 平台名
+     * @param giftName 礼物名称
+     * @param num      礼物数量
+     * @param user     赠送人
+     * @param face     赠送者头像的 URL
      */
-    public GiftEvent(Gift gift) {
-        super();
-        this.gift = gift;
-    }
-
-    public GiftEvent(Gift gift, String platform) {
+    public GiftEvent(String platform, String giftName, int num, String user, String face) {
         super(platform);
-        this.gift = gift;
+        this.giftName = giftName;
+        this.num = num;
+        this.user = user;
+        this.face = face;
     }
 
-    public Gift getGift() {
-        return gift;
+    public String getGiftName() {
+        return giftName;
     }
 
-    public static class Gift {
+    public int getNum() {
+        return num;
+    }
 
-        /**
-         * 礼物名称
-         */
-        private String giftName;
+    public String getUser() {
+        return user;
+    }
 
-        /**
-         * 礼物数量
-         */
-        private int num;
-
-        /**
-         * 赠送人
-         */
-        private String user;
-
-        /**
-         * 赠送者头像的 URL
-         */
-        private String face;
-
-        public Gift(String giftName, int num, String user, String face) {
-            this.giftName = giftName;
-            this.num = num;
-            this.user = user;
-            this.face = face;
-        }
-
-        /**
-         * 构建一个 Gift 对象
-         *
-         * @param giftName 礼物名称
-         * @param num      礼物数量
-         * @param user     赠送人
-         * @param face     赠送者头像的 URL
-         */
-        public static Gift builder(String giftName, int num, String user, String face) {
-            return new Gift(giftName, num, user, face);
-        }
-
-        public String getGiftName() {
-            return giftName;
-        }
-
-        public int getNum() {
-            return num;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public String getFace() {
-            return face;
-        }
+    public String getFace() {
+        return face;
     }
 }
