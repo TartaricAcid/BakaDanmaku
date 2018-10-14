@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DanmakuThreadFactory {
+    // 存储弹幕线程的 HashMap
     private static final HashMap<String, BaseDanmakuThread> danmakuThreads = new HashMap<>();
     private static final HashMap<String, Thread> realDanmakuThreads = new HashMap<>();
 

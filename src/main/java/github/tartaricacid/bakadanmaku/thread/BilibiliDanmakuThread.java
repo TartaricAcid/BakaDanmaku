@@ -10,6 +10,10 @@ import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
+import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
+import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
+import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -28,14 +32,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BilibiliDanmakuThread extends BaseDanmakuThread {
-    private static final String LIVE_URL = "livecmt-1.bilibili.com";
-    private static final int PORT = 788;
-    private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init";
+    private static final String LIVE_URL = "livecmt-1.bilibili.com"; // B 站弹幕地址
+    private static final int PORT = 788; // Webscoket 端口
+    private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init"; // 获取真实直播房间号的 api 地址
 
-    private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),");
-    private static Gson gson = new Gson();
+    private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),"); // 用来读取 JSON 的正则表达式
+    private static Gson gson = new Gson(); // 等会用来读取 JSON 的
 
-    private DataOutputStream dataOutputStream;
+    private DataOutputStream dataOutputStream; // 等会读取数据流的
 
     @Override
     public boolean preRunCheck() {
@@ -140,6 +144,17 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         WELCOME	欢迎加入房间
                         WELCOME_GUARD	欢迎房管加入房间
                         SYS_MSG	系统消息
+                        NOTICE_MSG 也是系统信息
+                        ENTRY_EFFECT 舰长进入房间信息
+                        COMBO_SEND 连击礼物起始
+                        COMBO_END 连击礼物结束
+                        ROOM_RANK 周星榜
+                        GUARD_MSG 开通舰长信息
+                        GUARD_BUY 舰长购买信息
+                        GUARD_LOTTERY_START 购买舰长后抽奖信息
+                        RAFFLE_END 抽奖结果
+                        SPECIAL_GIFT 神奇的东西，不知道是啥
+                        WISH_BOTTLE 这又是啥
                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
@@ -180,8 +195,18 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "WELCOME": {
-                                //TODO: Emit WelcomeEvent
-                                // MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
+                                // 配置管控，是否显示礼物信息
+                                if (!BakaDanmakuConfig.bilibiliRoom.showWelcome) {
+                                    break;
+                                }
+
+                                LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
+
+                                // 具体的送礼信息
+                                String user = (String) dataMap.get("uname");
+
+                                // Post WelcomeEvent
+                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
                                 break;
                             }
 
@@ -199,7 +224,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
                         }
                     }
-                } catch (JsonSyntaxException joe) {
+                } catch (JsonSyntaxException | NumberFormatException eIn) {
                     // 送礼数据解析可能会出现异常，捕捉一下
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -237,7 +262,10 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      * @param roomId 真实的直播房间 ID
      */
     private void sendJoinMsg(String roomId) {
+        // 生成随机的 UID
         long clientId = RandomUtils.nextLong(100000000000000L, 300000000000000L);
+
+        // 发送验证包
         sendDataPack(7, String.format("{\"roomid\":%s,\"uid\":%d,\"protover\": 1,\"platform\": \"web\",\"clientver\": \"1.4.0\"}",
                 roomId,
                 clientId));

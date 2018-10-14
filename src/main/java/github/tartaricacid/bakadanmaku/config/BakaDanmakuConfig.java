@@ -11,8 +11,6 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.ArrayList;
-
 @Config(modid = BakaDanmaku.MOD_ID, name = "BakaDanmaku", category = "baka_danmaku_mod")
 public class BakaDanmakuConfig {
     @Config.Name("通用设置")
@@ -35,7 +33,7 @@ public class BakaDanmakuConfig {
         public Boolean showPopularity = true;
 
         @Config.Comment("显示的人气值格式，注意格式符")
-        public String popularityStyle = "§2§l人气值§f§r：§f§l%1$s";
+        public String popularityStyle = "§6§l人气值: %1$s";
     }
 
     public static class BilibiliRoom {
@@ -64,13 +62,13 @@ public class BakaDanmakuConfig {
         public Boolean showDanmaku = true;
 
         @Config.Comment("发送的弹幕信息格式，注意格式符")
-        public String danmakuStyle = "§f§r[§2§l%1$s§f§r] §6§l%2$s：§f§l%3$s";
+        public String danmakuStyle = "§f§l[§8§l%1$s§f§l] §6§l%2$s：§f§l%3$s";
 
         @Config.Comment("是否显示礼物信息")
         public Boolean showGift = true;
 
         @Config.Comment("发送的礼物信息格式，注意格式符")
-        public String giftStyle = "§f§r[§2§l%1$s§f§r] §8§l%2$s：%3$sx%4$d";
+        public String giftStyle = "§f§l[§8§l%1$s§f§l] §8§l%2$s：%3$sx%4$d";
     }
 
     public static class Network {
