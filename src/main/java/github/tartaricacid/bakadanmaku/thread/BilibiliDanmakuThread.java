@@ -195,7 +195,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "WELCOME": {
-                                // 配置管控，是否显示礼物信息
+                                // 配置管控，是否显示欢迎信息
                                 if (!BakaDanmakuConfig.bilibiliRoom.showWelcome) {
                                     break;
                                 }

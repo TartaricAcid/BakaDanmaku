@@ -47,6 +47,9 @@ public class BakaDanmakuConfig {
         @Config.Comment("是否显示礼物信息")
         public Boolean showGift = true;
 
+        @Config.Comment("是否显示欢迎信息")
+        public Boolean showWelcome = true;
+
         @Config.Comment("是否启用在聊天栏输出弹幕信息")
         @Config.RequiresMcRestart
         public Boolean enableChatMsgHandler = true;
@@ -95,7 +98,6 @@ public class BakaDanmakuConfig {
                 // 重载配置
                 ConfigManager.sync(BakaDanmaku.MOD_ID, Config.Type.INSTANCE);
 
-                // 提示已经关闭
                 if(BakaDanmaku.player != null){
                     // 提示信息
                     BaseDanmakuThread.sendChatMessage("§8§l配置已经保存，正在重启中……");
