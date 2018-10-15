@@ -41,6 +41,9 @@ public class BakaDanmakuConfig {
         @Config.RangeInt(min = 0)
         public int liveRoom = 0;
 
+        @Config.Comment("代表信息来源的标识符，显示在开头")
+        public String platformDisplayName = "bilibili";
+
         @Config.Comment("是否显示弹幕")
         public Boolean showDanmaku = true;
 
