@@ -43,7 +43,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
         if (BakaDanmakuConfig.bilibiliRoom.liveRoom == 0) {
-            sendChatMessage("§8§l直播房间 ID 未设置，弹幕机已停止工作！ ");
+            sendChatMessage("§8§l直播房间 ID 未设置，弹幕姬已停止工作！ ");
             check = false;
         }
 
@@ -344,16 +344,5 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         }
 
         return realRoomId;
-    }
-
-    /**
-     * 超时重连的间隔
-     */
-    private void waitForRetryInterval() {
-        try {
-            Thread.sleep(BakaDanmakuConfig.network.retryInterval);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

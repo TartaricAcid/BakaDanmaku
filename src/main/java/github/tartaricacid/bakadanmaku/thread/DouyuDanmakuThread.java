@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class DouyuDanmakuThread extends BaseDanmakuThread {
     private static final String LIVE_URL = "openbarrage.douyutv.com"; // 斗鱼弹幕地址
-    private static final int PORT = 8601; // Webscoket 端口
+    private static final int PORT = 8601; // Websocket 端口
 
     private static Pattern readDanmakuUser = Pattern.compile("nn@=(.*?)/"); // 读取弹幕发送者
     private static Pattern readDanmakuInfo = Pattern.compile("txt@=(.*?)/"); // 读取弹幕文本
@@ -74,7 +74,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             sendJoinMsg(roomID);
 
             // 提示，已经连接
-            sendChatMessage("§8§l弹幕机已经连接");
+            sendChatMessage("§8§l弹幕姬已经连接");
 
             // 等待验证
             while (keepRunning) {
@@ -271,17 +271,6 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             // 写入输出数据流中
             dataOutputStream.write(byteBuffer.array());
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 超时重连的间隔
-     */
-    private void waitForRetryInterval() {
-        try {
-            Thread.sleep(BakaDanmakuConfig.network.retryInterval);
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
