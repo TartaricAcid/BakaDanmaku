@@ -155,10 +155,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
-                                // 配置管控，是否显示弹幕
-                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
-                                    continue;
-                                }
                                 ArrayList infoList = (ArrayList) jsonMap.get("info");
 
                                 // 具体的发送者和信息
@@ -171,11 +167,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "SEND_GIFT": {
-                                // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.chatMsg.showGift) {
-                                    continue;
-                                }
-
                                 // 莫名会为空，加个判定再进行解析
                                 if (jsonMap.get("data") == null) continue;
                                 LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
