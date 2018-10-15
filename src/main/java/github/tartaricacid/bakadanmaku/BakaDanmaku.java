@@ -6,6 +6,7 @@ import github.tartaricacid.bakadanmaku.handler.ChatMsgHandler;
 import github.tartaricacid.bakadanmaku.handler.ScreenMsgHandler;
 import github.tartaricacid.bakadanmaku.handler.StartStopHandler;
 import github.tartaricacid.bakadanmaku.thread.BilibiliDanmakuThread;
+import github.tartaricacid.bakadanmaku.thread.DouyuDanmakuThread;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +32,7 @@ public class BakaDanmaku {
     public void init(FMLInitializationEvent event) {
         // 装载各大平台的弹幕线程
         DanmakuThreadFactory.setDanmakuThread("bilibili", new BilibiliDanmakuThread());
+        DanmakuThreadFactory.setDanmakuThread("douyu", new DouyuDanmakuThread());
 
         // 注册开启，关闭弹幕事件处理器
         MinecraftForge.EVENT_BUS.register(StartStopHandler.class);

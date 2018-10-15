@@ -184,10 +184,9 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String giftName = (String) dataMap.get("giftName");
                                 int num = ((Double) dataMap.get("num")).intValue();
                                 String user = (String) dataMap.get("uname");
-                                String face = (String) dataMap.get("face");
 
                                 // Post GiftEvent
-                                MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, giftName, num, user, face));
+                                MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, giftName, num, user));
                                 break;
                             }
 

@@ -14,14 +14,26 @@ public class BakaDanmakuConfig {
     @Config.Name("通用设置")
     public static General general = new General();
 
-    @Config.Name("哔哩哔哩直播间配置")
-    public static BilibiliRoom bilibiliRoom = new BilibiliRoom();
-
     @Config.Name("聊天栏弹幕设置")
     public static ChatMsg chatMsg = new ChatMsg();
 
     @Config.Name("网络配置")
     public static Network network = new Network();
+
+    @Config.Name("哔哩哔哩直播间配置")
+    public static BilibiliRoom bilibiliRoom = new BilibiliRoom();
+
+    @Config.Name("斗鱼直播间配置")
+    public static DouyuRoom douyuRoom = new DouyuRoom();
+
+    @Config.Name("虎牙直播间配置")
+    public static HuyaRoom huyaRoom = new HuyaRoom();
+
+    @Config.Name("触手直播间配置")
+    public static ChushouRoom chushouRoom = new ChushouRoom();
+
+    @Config.Name("熊猫直播间配置")
+    public static PandaRoom pandaRoom = new PandaRoom();
 
     public static class General {
         @Config.Comment("直播平台选择")
@@ -45,12 +57,51 @@ public class BakaDanmakuConfig {
 
         @Config.Comment("代表信息来源的标识符，显示在开头")
         @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "bilibili";
+        public String platformDisplayName = "哔哩哔哩";
+    }
 
-        // TODO: delete the "unfinished" tag when it's okay.
-        @Config.Comment("是否启用屏幕上滚动弹幕信息（未完成）")
-        @Config.RequiresMcRestart
-        public Boolean enableScreenMsgHandler = false;
+    public static class DouyuRoom {
+        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+        @Config.Name("直播房间号")
+        @Config.RangeInt(min = 0)
+        public int liveRoom = 0;
+
+        @Config.Comment("代表信息来源的标识符，显示在开头")
+        @Config.Name("自定义直播平台名称")
+        public String platformDisplayName = "斗鱼";
+    }
+
+    public static class HuyaRoom {
+        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+        @Config.Name("直播房间号")
+        @Config.RangeInt(min = 0)
+        public int liveRoom = 0;
+
+        @Config.Comment("代表信息来源的标识符，显示在开头")
+        @Config.Name("自定义直播平台名称")
+        public String platformDisplayName = "虎牙";
+    }
+
+    public static class ChushouRoom {
+        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+        @Config.Name("直播房间号")
+        @Config.RangeInt(min = 0)
+        public int liveRoom = 0;
+
+        @Config.Comment("代表信息来源的标识符，显示在开头")
+        @Config.Name("自定义直播平台名称")
+        public String platformDisplayName = "触手";
+    }
+
+    public static class PandaRoom {
+        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+        @Config.Name("直播房间号")
+        @Config.RangeInt(min = 0)
+        public int liveRoom = 0;
+
+        @Config.Comment("代表信息来源的标识符，显示在开头")
+        @Config.Name("自定义直播平台名称")
+        public String platformDisplayName = "熊猫";
     }
 
     public static class ChatMsg {
