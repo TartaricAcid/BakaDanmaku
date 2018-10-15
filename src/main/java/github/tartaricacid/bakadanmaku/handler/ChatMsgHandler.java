@@ -1,10 +1,11 @@
 package github.tartaricacid.bakadanmaku.handler;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
-import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
+import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
+import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
@@ -28,7 +29,7 @@ public class ChatMsgHandler {
     public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BakaDanmakuConfig.chatMsg.showDanmaku) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getPlatform(), e.getDanmaku().getUser(), e.getDanmaku().getMsg())));
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getPlatform(), e.getUser(), e.getMsg())));
         }
     }
 
@@ -41,7 +42,20 @@ public class ChatMsgHandler {
     public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BakaDanmakuConfig.chatMsg.showGift) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getPlatform(), e.getGift().getUser(), e.getGift().getGiftName(), e.getGift().getNum())));
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getPlatform(), e.getUser(), e.getGiftName(), e.getNum())));
+        }
+    }
+
+    /**
+     * 欢迎玩家进入
+     *
+     * @param e 玩家进入事件
+     */
+    @SubscribeEvent
+    public static void welcome(WelcomeEvent e) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (player != null && BakaDanmakuConfig.chatMsg.showWelcome) {
+            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.welcomeStyle, e.getPlatform(), e.getUser())));
         }
     }
 

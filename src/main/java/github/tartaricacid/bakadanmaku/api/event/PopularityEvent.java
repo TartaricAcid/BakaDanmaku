@@ -1,10 +1,9 @@
 package github.tartaricacid.bakadanmaku.api.event;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class PopularityEvent extends Event {
+public class PopularityEvent extends BaseDanmakuEvent {
     private int popularity; // 人气值
 
     /**
@@ -12,7 +11,8 @@ public class PopularityEvent extends Event {
      *
      * @param popularity 人气值
      */
-    public PopularityEvent(int popularity) {
+    public PopularityEvent(String platform, int popularity) {
+        super(platform);
         this.popularity = popularity;
     }
 

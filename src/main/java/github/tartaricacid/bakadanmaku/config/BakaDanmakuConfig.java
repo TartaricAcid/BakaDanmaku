@@ -3,8 +3,6 @@ package github.tartaricacid.bakadanmaku.config;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -27,35 +25,27 @@ public class BakaDanmakuConfig {
 
     public static class General {
         @Config.Comment("直播平台选择")
+        @Config.Name("直播平台")
         public String platform = "bilibili";
 
         @Config.Comment("是否显示人气值信息")
+        @Config.Name("是否显示人气值")
         public Boolean showPopularity = true;
 
         @Config.Comment("显示的人气值格式，注意格式符")
+        @Config.Name("人气值格式")
         public String popularityStyle = "§6§l人气值: %1$s";
     }
 
     public static class BilibiliRoom {
         @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+        @Config.Name("直播房间号")
         @Config.RangeInt(min = 0)
         public int liveRoom = 0;
 
         @Config.Comment("代表信息来源的标识符，显示在开头")
+        @Config.Name("自定义直播平台名称")
         public String platformDisplayName = "bilibili";
-
-        @Config.Comment("是否显示弹幕")
-        public Boolean showDanmaku = true;
-
-        @Config.Comment("是否显示礼物信息")
-        public Boolean showGift = true;
-
-        @Config.Comment("是否显示欢迎信息")
-        public Boolean showWelcome = true;
-
-        @Config.Comment("是否启用在聊天栏输出弹幕信息")
-        @Config.RequiresMcRestart
-        public Boolean enableChatMsgHandler = true;
 
         // TODO: delete the "unfinished" tag when it's okay.
         @Config.Comment("是否启用屏幕上滚动弹幕信息（未完成）")
@@ -65,26 +55,41 @@ public class BakaDanmakuConfig {
 
     public static class ChatMsg {
         @Config.Comment("是否显示弹幕")
+        @Config.Name("是否显示弹幕")
         public Boolean showDanmaku = true;
 
         @Config.Comment("发送的弹幕信息格式，注意格式符")
-        public String danmakuStyle = "§f§l[§8§l%1$s§f§l] §6§l%2$s：§f§l%3$s";
+        @Config.Name("弹幕格式")
+        public String danmakuStyle = "§7§l[§8§l%1$s§7§l] §6§l%2$s: §f§l%3$s";
 
         @Config.Comment("是否显示礼物信息")
+        @Config.Name("是否显示礼物")
         public Boolean showGift = true;
 
         @Config.Comment("发送的礼物信息格式，注意格式符")
-        public String giftStyle = "§f§l[§8§l%1$s§f§l] §8§l%2$s：%3$sx%4$d";
+        @Config.Name("礼物格式")
+        public String giftStyle = "§7§l[§8§l%1$s§7§l] §8§l%2$s: %3$sx%4$d";
+
+        @Config.Comment("是否显示欢迎信息")
+        @Config.Name("是否显示欢迎信息")
+        public Boolean showWelcome = true;
+
+        @Config.Comment("发送的欢迎信息格式，注意格式符")
+        @Config.Name("欢迎信息格式")
+        public String welcomeStyle = "§7§l[§8§l%1$s§7§l] §f§l欢迎 §6§l%2$s§f§l 加入直播间";
     }
 
     public static class Network {
         @Config.Comment("测试网络连通性时的超时时间")
+        @Config.Name("超时时间")
         public int timeout = 2000;
 
         @Config.Comment("连接失败后重连的次数")
+        @Config.Name("重连次数")
         public int retry = 3;
 
-        @Config.Comment("连接失败后的重连间隔，单位毫秒；0代表不重连，直接退出")
+        @Config.Comment("连接失败后的重连间隔，单位毫秒；0 代表不重连，直接退出")
+        @Config.Name("重连间隔")
         @Config.RangeInt(min = 0)
         public int retryInterval = 2000;
     }
@@ -101,7 +106,7 @@ public class BakaDanmakuConfig {
                 // 重载配置
                 ConfigManager.sync(BakaDanmaku.MOD_ID, Config.Type.INSTANCE);
 
-                if(BakaDanmaku.player != null){
+                if (BakaDanmaku.player != null) {
                     // 提示信息
                     BaseDanmakuThread.sendChatMessage("§8§l配置已经保存，正在重启中……");
 

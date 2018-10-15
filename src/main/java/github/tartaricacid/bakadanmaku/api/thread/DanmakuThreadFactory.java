@@ -2,6 +2,7 @@ package github.tartaricacid.bakadanmaku.api.thread;
 
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,17 +51,20 @@ public class DanmakuThreadFactory {
         BaseDanmakuThread dmThread = getDanmakuThread(platform);
 
         if (dmThread != null) {
+            // 将指示参数设定为 true
             dmThread.keepRunning = true;
 
+            // new 线程，并启动
             Thread threadToRun = new Thread(dmThread, platform + "DanmakuThread");
             threadToRun.start();
 
+            // 在存储实际运行的 map 中存入这个线程
             realDanmakuThreads.put(platform, threadToRun);
         } else {
+            // 发送错误信息
             BakaDanmaku.logger.error("平台 [" + platform + "] 不存在！请检查配置文件或已安装 Mod！");
-            // TODO: 红色字体
-            BaseDanmakuThread.sendChatMessage("弹幕姬错误：");
-            BaseDanmakuThread.sendChatMessage("平台 [" + platform + "] 不存在！请检查配置文件或已安装 Mod！");
+            BaseDanmakuThread.sendChatMessage(TextFormatting.RED + "弹幕姬错误：");
+            BaseDanmakuThread.sendChatMessage(TextFormatting.RED + "平台 [" + platform + "] 不存在！请检查配置文件或已安装 Mod！");
         }
     }
 
@@ -73,19 +77,23 @@ public class DanmakuThreadFactory {
         BaseDanmakuThread th = getDanmakuThread(platform);
 
         if (th != null) {
-            th.keepRunning = false; // 关闭线程
+            // 关闭线程标识符
+            th.keepRunning = false;
+
+            // 阻塞，等待线程关闭，注意不要在主线程操作此方法
             while (realDanmakuThreads.get(platform).isAlive()) ;
-            th.clear(); // 清空线程
+
+            // 清空线程
+            th.clear();
         }
     }
 
     /**
      * 停止现在正在运行的所有 DanmakuThread
+     * stopThread 会卡住游戏，所以得在单独线程进行关闭操作
      */
     public static void stopAllThreads() {
-        realDanmakuThreads.forEach((platform, thread) -> {
-            stopThread(platform);
-        });
+        new Thread(() -> realDanmakuThreads.forEach((platform, thread) -> stopThread(platform)), "StopDanmakuThread");
     }
 
     /**

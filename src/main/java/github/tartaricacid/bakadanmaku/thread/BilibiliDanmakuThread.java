@@ -8,12 +8,9 @@ import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
-import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
-import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -124,7 +121,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
                         // Post PopularityEvent
-                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(num));
+                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, num));
                     }
 
                     if (action == 5) {
@@ -159,7 +156,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         switch (msgType) {
                             case "DANMU_MSG": {
                                 // 配置管控，是否显示弹幕
-                                if (!BakaDanmakuConfig.bilibiliRoom.showDanmaku) {
+                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
                                     continue;
                                 }
                                 ArrayList infoList = (ArrayList) jsonMap.get("info");
@@ -175,7 +172,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                             case "SEND_GIFT": {
                                 // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.bilibiliRoom.showGift) {
+                                if (!BakaDanmakuConfig.chatMsg.showGift) {
                                     continue;
                                 }
 
@@ -196,7 +193,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                             case "WELCOME": {
                                 // 配置管控，是否显示欢迎信息
-                                if (!BakaDanmakuConfig.bilibiliRoom.showWelcome) {
+                                if (!BakaDanmakuConfig.chatMsg.showWelcome) {
                                     break;
                                 }
 
@@ -206,12 +203,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) dataMap.get("uname");
 
                                 // Post WelcomeEvent
-                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(user));
-                                break;
-                            }
-
-                            case "WELCOME_GUARD": {
-                                //TODO: Emit WelcomeGuardEvent
+                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, user));
                                 break;
                             }
 
@@ -238,6 +230,9 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         }
     }
 
+    /**
+     * 清除部分，重载 Gson
+     */
     @Override
     public void clear() {
         gson = new Gson();

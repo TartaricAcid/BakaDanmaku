@@ -1,10 +1,9 @@
 package github.tartaricacid.bakadanmaku.api.event;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class GiftEvent extends BakaDanmakuEvent {
+public class GiftEvent extends BaseDanmakuEvent {
     private String giftName; // 礼物名称
     private int num; // 礼物数量
     private String user; // 赠送人

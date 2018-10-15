@@ -1,7 +1,7 @@
 package github.tartaricacid.bakadanmaku;
 
-import github.tartaricacid.bakadanmaku.api.command.CommandBakaDM;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
+import github.tartaricacid.bakadanmaku.command.CommandBakaDM;
 import github.tartaricacid.bakadanmaku.handler.ChatMsgHandler;
 import github.tartaricacid.bakadanmaku.handler.ScreenMsgHandler;
 import github.tartaricacid.bakadanmaku.handler.StartStopHandler;
@@ -11,8 +11,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

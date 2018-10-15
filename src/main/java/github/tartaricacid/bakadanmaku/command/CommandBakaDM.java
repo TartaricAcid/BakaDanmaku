@@ -1,4 +1,4 @@
-package github.tartaricacid.bakadanmaku.api.command;
+package github.tartaricacid.bakadanmaku.command;
 
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
