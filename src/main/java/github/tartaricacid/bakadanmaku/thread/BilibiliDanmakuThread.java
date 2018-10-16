@@ -69,7 +69,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
             sendJoinMsg(roomID);
 
             // 提示，已经连接
-            sendChatMessage("§8§l弹幕机已经连接");
+            sendChatMessage("§8§l弹幕姬已经连接");
 
             // 创建定时器
             Timer timer = new Timer();
