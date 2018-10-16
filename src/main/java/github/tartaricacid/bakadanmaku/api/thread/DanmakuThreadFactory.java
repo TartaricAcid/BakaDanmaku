@@ -77,6 +77,9 @@ public class DanmakuThreadFactory {
         BaseDanmakuThread th = getDanmakuThread(platform);
 
         if (th != null) {
+            // 在运行线程表中移除该线程
+            realDanmakuThreads.remove(platform);
+
             // 关闭线程标识符
             th.keepRunning = false;
 
@@ -93,7 +96,7 @@ public class DanmakuThreadFactory {
      * stopThread 会卡住游戏，所以得在单独线程进行关闭操作
      */
     public static void stopAllThreads() {
-        new Thread(() -> realDanmakuThreads.forEach((platform, thread) -> stopThread(platform)), "StopDanmakuThread");
+        new Thread(() -> realDanmakuThreads.forEach((platform, thread) -> stopThread(platform)), "StopDanmakuThread").start();
     }
 
     /**
@@ -104,6 +107,16 @@ public class DanmakuThreadFactory {
      */
     public static boolean isThreadRunning(String platform) {
         return realDanmakuThreads.containsKey(platform);
+    }
+
+    /**
+     * 判断指定 platform 的 DanmakuThread 是否存在
+     *
+     * @param platform 平台名
+     * @return DanmakuThread 存在与否
+     */
+    public static boolean isDanmakuThreadAvailable(String platform) {
+        return danmakuThreads.containsKey(platform);
     }
 
     /**
