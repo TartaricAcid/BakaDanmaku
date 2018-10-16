@@ -111,7 +111,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                 inputStream.read(bodyByte);
 
                 // 如果长度大于 8，说明是有数据的
-                String bodyStringFirst = new String(bodyByte, "UTF-8");
+                String bodyStringFirst = new String(bodyByte, StandardCharsets.UTF_8);
 
                 // 看下是不是登陆信息
                 if (bodyStringFirst.indexOf("type@=loginres/") == 0) {
@@ -141,7 +141,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                     inputStream.read(bodyByte);
 
                     // 如果长度大于 8，说明是有数据的
-                    String bodyString = new String(bodyByte, "UTF-8");
+                    String bodyString = new String(bodyByte, StandardCharsets.UTF_8);
 
                     // BakaDanmaku.logger.info(bodyString);
 
@@ -293,7 +293,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
         try {
             // 数据部分，要求以 \0 结尾，同时以 UTF-8 编码解析成 Byte
             body = body + '\0';
-            byte[] bodyBytes = body.getBytes("UTF-8");
+            byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
 
             // 封包总长度，因为头部固定为 8 字长，故加上 8
             int length = bodyBytes.length + 8;

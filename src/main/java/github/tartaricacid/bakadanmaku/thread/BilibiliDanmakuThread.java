@@ -120,7 +120,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                     if (action == 5) {
                         // UTF-8 解码
-                        String bodyString = new String(bodyByte, "UTF-8");
+                        String bodyString = new String(bodyByte, StandardCharsets.UTF_8);
 
                         // 数据解析成 json
                         Object o = gson.fromJson(bodyString, Object.class);
@@ -266,7 +266,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private void sendDataPack(int action, String body) {
         try {
             // 数据部分，以 UTF-8 编码解析成 Byte
-            byte[] bodyBytes = body.getBytes("UTF-8");
+            byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
 
             // 封包总长度，因为头部固定为 16 字长，故加上 16
             int length = bodyBytes.length + 16;
