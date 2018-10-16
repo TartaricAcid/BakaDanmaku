@@ -47,12 +47,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
             check = false;
         }
 
-        // 检查网络连通性
-        while (!isReachable()) {
-            if ((retryCounter <= 0) || (BakaDanmakuConfig.network.retryInterval == 0)) check = false;
-            waitForRetryInterval();
-        }
-
         return check;
     }
 
@@ -100,8 +94,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                     int action = byteBuffer.getInt(); // 操作码
                     int sequence = byteBuffer.getInt(); // 协议
 
-                    // 如果长度小于等于 16
-                    if (length <= 16) continue;
+                    // 如果长度小于等于 16，谨防万一，加一个上限
+                    if (length <= 16 || length > 65534) continue;
 
                     // 剔除头部，进行读取
                     byte[] bodyByte = new byte[length - 16];

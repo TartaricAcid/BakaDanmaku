@@ -1,7 +1,10 @@
 package github.tartaricacid.bakadanmaku.thread;
 
+import com.google.common.io.ByteStreams;
+import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
+import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
@@ -12,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -22,6 +27,8 @@ import java.util.regex.Pattern;
 public class DouyuDanmakuThread extends BaseDanmakuThread {
     private static final String LIVE_URL = "openbarrage.douyutv.com"; // 斗鱼弹幕地址
     private static final int PORT = 8601; // Websocket 端口
+
+    private static Pattern readHotValue = Pattern.compile("\"online\":(\\d+),"); // 读取弹幕发送者
 
     private static Pattern readDanmakuUser = Pattern.compile("nn@=(.*?)/"); // 读取弹幕发送者
     private static Pattern readDanmakuInfo = Pattern.compile("txt@=(.*?)/"); // 读取弹幕文本
@@ -41,12 +48,6 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
         if (BakaDanmakuConfig.douyuRoom.liveRoom == 0) {
             sendChatMessage("§8§l直播房间 ID 未设置，弹幕机已停止工作！ ");
             check = false;
-        }
-
-        // 检查网络连通性
-        while (!isReachable()) {
-            if ((retryCounter <= 0) || (BakaDanmakuConfig.network.retryInterval == 0)) check = false;
-            waitForRetryInterval();
         }
 
         return check;
@@ -75,6 +76,23 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
 
             // 提示，已经连接
             sendChatMessage("§8§l弹幕姬已经连接");
+
+            // 直播热度值获取，Post PopularityEvent
+            MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, getHotValue()));
+
+            // 创建定时器
+            Timer timer = new Timer();
+            // 利用 timer 模块定时发送心跳包，同时定期更新直播间的热度值，周期为 45 秒
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    // 心跳包
+                    sendHeartBeat();
+
+                    // 直播热度值更新，Post PopularityEvent
+                    MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, getHotValue()));
+                }
+            }, 45000, 45000);
 
             // 等待验证
             while (keepRunning) {
@@ -105,16 +123,6 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             // 发送分组信息
             sendDataPack((short) 689, String.format("type@=joingroup/rid@=%s/gid@=-9999", roomID));
 
-            // 创建定时器
-            Timer timer = new Timer();
-            // 利用 timer 模块定时发送心跳包，周期为 45 秒
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    sendHeartBeat();
-                }
-            }, 45000, 45000);
-
             // 轮询接收弹幕
             while (keepRunning) {
                 try {
@@ -125,8 +133,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
 
                     int length = LittleToBig(byteBuffer.getInt()); // 长度数据
 
-                    // 如果长度小于等于 8
-                    if (length <= 16) continue;
+                    // 如果长度小于等于 8，或者超出 String 上限，这种情况很常见
+                    if (length <= 16 || length > 65534) continue;
 
                     // 剔除头部，进行读取
                     byte[] bodyByte = new byte[length - 8];
@@ -134,6 +142,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
 
                     // 如果长度大于 8，说明是有数据的
                     String bodyString = new String(bodyByte, "UTF-8");
+
+                    // BakaDanmaku.logger.info(bodyString);
 
                     // 开始判断，普通弹幕
                     if (bodyString.indexOf("type@=chatmsg") == 0) {
@@ -234,6 +244,43 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
      */
     private void sendHeartBeat() {
         sendDataPack((short) 689, "type@=mrkl/");
+    }
+
+    /**
+     * 读取直播热度值
+     *
+     * @return 直播热度值
+     */
+    private int getHotValue() {
+        // 初始化
+        int hotValue = 0;
+
+        try {
+            // B 站提供的获取直播 id 的 api
+            URL url = new URL("http://open.douyucdn.cn/api/RoomApi/room/" + BakaDanmakuConfig.douyuRoom.liveRoom);
+
+            // 获取网络数据流
+            InputStream con = url.openStream();
+
+            // 按照 UTF-8 编码解析
+            String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
+
+            // 关闭数据流
+            con.close();
+
+            // 简单的 JSON 不需要用 Gson 解析，正则省事
+            Matcher matcher = readHotValue.matcher(data);
+            if (matcher.find()) {
+                hotValue = Integer.valueOf(matcher.group(1));
+            } else {
+                // 日志记录
+                BakaDanmaku.logger.fatal("Cannot get live hot value.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return hotValue;
     }
 
     /**
