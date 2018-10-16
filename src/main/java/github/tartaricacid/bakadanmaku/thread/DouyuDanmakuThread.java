@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class DouyuDanmakuThread extends BaseDanmakuThread {
     private static final String LIVE_URL = "openbarrage.douyutv.com"; // 斗鱼弹幕地址
-    private static final int PORT = 8601; // Webscoket 端口
+    private static final int PORT = 8601; // Websocket 端口
 
     private static Pattern readHotValue = Pattern.compile("\"online\":(\\d+),"); // 读取弹幕发送者
 
@@ -75,7 +75,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             sendJoinMsg(roomID);
 
             // 提示，已经连接
-            sendChatMessage("§8§l弹幕机已经连接");
+            sendChatMessage("§8§l弹幕姬已经连接");
 
             // 直播热度值获取，Post PopularityEvent
             MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, getHotValue()));
@@ -111,7 +111,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                 inputStream.read(bodyByte);
 
                 // 如果长度大于 8，说明是有数据的
-                String bodyStringFirst = new String(bodyByte, "UTF-8");
+                String bodyStringFirst = new String(bodyByte, StandardCharsets.UTF_8);
 
                 // 看下是不是登陆信息
                 if (bodyStringFirst.indexOf("type@=loginres/") == 0) {
@@ -141,7 +141,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                     inputStream.read(bodyByte);
 
                     // 如果长度大于 8，说明是有数据的
-                    String bodyString = new String(bodyByte, "UTF-8");
+                    String bodyString = new String(bodyByte, StandardCharsets.UTF_8);
 
                     // BakaDanmaku.logger.info(bodyString);
 
@@ -293,7 +293,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
         try {
             // 数据部分，要求以 \0 结尾，同时以 UTF-8 编码解析成 Byte
             body = body + '\0';
-            byte[] bodyBytes = body.getBytes("UTF-8");
+            byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
 
             // 封包总长度，因为头部固定为 8 字长，故加上 8
             int length = bodyBytes.length + 8;
@@ -318,17 +318,6 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             // 写入输出数据流中
             dataOutputStream.write(byteBuffer.array());
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 超时重连的间隔
-     */
-    private void waitForRetryInterval() {
-        try {
-            Thread.sleep(BakaDanmakuConfig.network.retryInterval);
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

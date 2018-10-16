@@ -49,4 +49,15 @@ public abstract class BaseDanmakuThread implements Runnable {
         if (BakaDanmaku.player != null)
             BakaDanmaku.player.sendMessage(new TextComponentString(text));
     }
+
+    /**
+     * 超时重连的间隔
+     */
+    protected void waitForRetryInterval() {
+        try {
+            Thread.sleep(BakaDanmakuConfig.network.retryInterval);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -43,7 +43,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
         if (BakaDanmakuConfig.bilibiliRoom.liveRoom == 0) {
-            sendChatMessage("§8§l直播房间 ID 未设置，弹幕机已停止工作！ ");
+            sendChatMessage("§8§l直播房间 ID 未设置，弹幕姬已停止工作！ ");
             check = false;
         }
 
@@ -69,7 +69,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
             sendJoinMsg(roomID);
 
             // 提示，已经连接
-            sendChatMessage("§8§l弹幕机已经连接");
+            sendChatMessage("§8§l弹幕姬已经连接");
 
             // 创建定时器
             Timer timer = new Timer();
@@ -120,7 +120,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
 
                     if (action == 5) {
                         // UTF-8 解码
-                        String bodyString = new String(bodyByte, "UTF-8");
+                        String bodyString = new String(bodyByte, StandardCharsets.UTF_8);
 
                         // 数据解析成 json
                         Object o = gson.fromJson(bodyString, Object.class);
@@ -149,10 +149,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
-                                // 配置管控，是否显示弹幕
-                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
-                                    continue;
-                                }
                                 ArrayList infoList = (ArrayList) jsonMap.get("info");
 
                                 // 具体的发送者和信息
@@ -165,11 +161,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "SEND_GIFT": {
-                                // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.chatMsg.showGift) {
-                                    continue;
-                                }
-
                                 // 莫名会为空，加个判定再进行解析
                                 if (jsonMap.get("data") == null) continue;
                                 LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
@@ -275,7 +266,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private void sendDataPack(int action, String body) {
         try {
             // 数据部分，以 UTF-8 编码解析成 Byte
-            byte[] bodyBytes = body.getBytes("UTF-8");
+            byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
 
             // 封包总长度，因为头部固定为 16 字长，故加上 16
             int length = bodyBytes.length + 16;
@@ -347,16 +338,5 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         }
 
         return realRoomId;
-    }
-
-    /**
-     * 超时重连的间隔
-     */
-    private void waitForRetryInterval() {
-        try {
-            Thread.sleep(BakaDanmakuConfig.network.retryInterval);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
