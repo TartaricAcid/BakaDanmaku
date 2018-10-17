@@ -78,14 +78,14 @@ public class DanmakuThreadFactory {
 
         if (th != null) {
             new Thread(() -> {
-                // 在运行线程表中移除该线程
-                realDanmakuThreads.remove(platform);
-
                 // 关闭线程标识符
                 th.keepRunning = false;
 
                 // 阻塞，等待线程关闭，注意不要在主线程操作此方法
                 while (realDanmakuThreads.get(platform).isAlive()) ;
+
+                // 在运行线程表中移除该线程
+                realDanmakuThreads.remove(platform);
 
                 // 清空线程
                 th.clear();
