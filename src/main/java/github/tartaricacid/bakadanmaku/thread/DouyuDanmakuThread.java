@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -40,6 +41,21 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
     private static Pattern readWelcomeUser = Pattern.compile("nn@=(.*?)/"); // 读取欢迎的用户名
 
     private DataOutputStream dataOutputStream; // 等会读取数据流的
+
+    // 斗鱼的礼物都是数字，需要这个映射将其改为对应名字
+    private static HashMap<String, String> giftMap = new HashMap<String, String>() {{
+        put("191", "100鱼丸");
+        put("192", "赞");
+        put("193", "弱鸡");
+        put("195", "飞机");
+        put("196", "火箭");
+        put("750", "办卡");
+        put("1005", "超级火箭");
+        put("1027", "药丸");
+        put("1571", "超大丸星");
+        put("1859", "小飞碟");
+        // TODO：还有大量礼物代码不清楚，待补全
+    }};
 
     @Override
     public boolean preRunCheck() {
@@ -172,7 +188,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
 
                         // 两者均匹配到才进行事件触发
                         if (mGiftName.find() && mUser.find() && mNum.find()) {
-                            String giftName = mGiftName.group(1); // 礼物信息
+                            String giftName = giftMap.containsKey(mGiftName.group(1)) ? giftMap.get(mGiftName.group(1)) : mGiftName.group(1); // 礼物信息
                             String user = mUser.group(1); // 发送者
                             int num = Integer.valueOf(mNum.group(1)); // 礼物数量
 
