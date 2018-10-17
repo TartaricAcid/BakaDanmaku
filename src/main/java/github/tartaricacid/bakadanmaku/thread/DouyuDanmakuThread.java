@@ -45,7 +45,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
     public boolean preRunCheck() {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
-        if (BakaDanmakuConfig.douyuRoom.liveRoom == 0) {
+        if (BakaDanmakuConfig.livePlatform.douyuRoom.liveRoom == 0) {
             sendChatMessage("§8§l直播房间 ID 未设置，弹幕机已停止工作！ ");
             check = false;
         }
@@ -56,7 +56,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
     @Override
     public void doRun() {
         // 获取真实房间 ID
-        String roomID = String.valueOf(BakaDanmakuConfig.douyuRoom.liveRoom);
+        String roomID = String.valueOf(BakaDanmakuConfig.livePlatform.douyuRoom.liveRoom);
 
         // 提示，相关房间信息已经获取
         sendChatMessage("§8§l直播房间 ID 已经获取，ID 为 " + roomID);
@@ -78,7 +78,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             sendChatMessage("§8§l弹幕姬已经连接");
 
             // 直播热度值获取，Post PopularityEvent
-            MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, getHotValue()));
+            MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, getHotValue()));
 
             // 创建定时器
             Timer timer = new Timer();
@@ -90,7 +90,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                     sendHeartBeat();
 
                     // 直播热度值更新，Post PopularityEvent
-                    MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, getHotValue()));
+                    MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, getHotValue()));
                 }
             }, 45000, 45000);
 
@@ -157,7 +157,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             String user = mUser.group(1); // 发送者
 
                             // Post DanmakuEvent
-                            MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, user, danmuMsg));
+                            MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, user, danmuMsg));
 
                             continue;
                         }
@@ -177,7 +177,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             int num = Integer.valueOf(mNum.group(1)); // 礼物数量
 
                             // Post GiftEvent
-                            MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, giftName, num, user));
+                            MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, giftName, num, user));
 
                             continue;
                         }
@@ -193,7 +193,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             String user = mUser.group(1); // 玩家名称
 
                             // Post WelcomeEvent
-                            MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.douyuRoom.platformDisplayName, user));
+                            MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, user));
                         }
                     }
                 } catch (Exception e) {
@@ -257,7 +257,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
 
         try {
             // B 站提供的获取直播 id 的 api
-            URL url = new URL("http://open.douyucdn.cn/api/RoomApi/room/" + BakaDanmakuConfig.douyuRoom.liveRoom);
+            URL url = new URL("http://open.douyucdn.cn/api/RoomApi/room/" + BakaDanmakuConfig.livePlatform.douyuRoom.liveRoom);
 
             // 获取网络数据流
             InputStream con = url.openStream();

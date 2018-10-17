@@ -20,23 +20,11 @@ public class BakaDanmakuConfig {
     @Config.Name("网络配置")
     public static Network network = new Network();
 
-    @Config.Name("哔哩哔哩直播间配置")
-    public static BilibiliRoom bilibiliRoom = new BilibiliRoom();
-
-    @Config.Name("斗鱼直播间配置")
-    public static DouyuRoom douyuRoom = new DouyuRoom();
-
-    @Config.Name("虎牙直播间配置")
-    public static HuyaRoom huyaRoom = new HuyaRoom();
-
-    @Config.Name("触手直播间配置")
-    public static ChushouRoom chushouRoom = new ChushouRoom();
-
-    @Config.Name("熊猫直播间配置")
-    public static PandaRoom pandaRoom = new PandaRoom();
+    @Config.Name("直播平台设置")
+    public static LivePlatform livePlatform = new LivePlatform();
 
     public static class General {
-        @Config.Comment("直播平台选择")
+        @Config.Comment("直播平台选择，可填 bilibili 和 douyu")
         @Config.Name("直播平台")
         public String platform = "bilibili";
 
@@ -47,61 +35,6 @@ public class BakaDanmakuConfig {
         @Config.Comment("显示的人气值格式，注意格式符")
         @Config.Name("人气值格式")
         public String popularityStyle = "§6§l人气值: %1$s";
-    }
-
-    public static class BilibiliRoom {
-        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
-        @Config.Name("直播房间号")
-        @Config.RangeInt(min = 0)
-        public int liveRoom = 0;
-
-        @Config.Comment("代表信息来源的标识符，显示在开头")
-        @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "哔哩哔哩";
-    }
-
-    public static class DouyuRoom {
-        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
-        @Config.Name("直播房间号")
-        @Config.RangeInt(min = 0)
-        public int liveRoom = 0;
-
-        @Config.Comment("代表信息来源的标识符，显示在开头")
-        @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "斗鱼";
-    }
-
-    public static class HuyaRoom {
-        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
-        @Config.Name("直播房间号")
-        @Config.RangeInt(min = 0)
-        public int liveRoom = 0;
-
-        @Config.Comment("代表信息来源的标识符，显示在开头")
-        @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "虎牙";
-    }
-
-    public static class ChushouRoom {
-        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
-        @Config.Name("直播房间号")
-        @Config.RangeInt(min = 0)
-        public int liveRoom = 0;
-
-        @Config.Comment("代表信息来源的标识符，显示在开头")
-        @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "触手";
-    }
-
-    public static class PandaRoom {
-        @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
-        @Config.Name("直播房间号")
-        @Config.RangeInt(min = 0)
-        public int liveRoom = 0;
-
-        @Config.Comment("代表信息来源的标识符，显示在开头")
-        @Config.Name("自定义直播平台名称")
-        public String platformDisplayName = "熊猫";
     }
 
     public static class ChatMsg {
@@ -128,6 +61,78 @@ public class BakaDanmakuConfig {
         @Config.Comment("发送的欢迎信息格式，注意格式符")
         @Config.Name("欢迎信息格式")
         public String welcomeStyle = "§7§l[§8§l%1$s§7§l] §f§l欢迎 §6§l%2$s§f§l 加入直播间";
+    }
+
+    public static class LivePlatform {
+        @Config.Name("哔哩哔哩直播间配置")
+        public BilibiliRoom bilibiliRoom = new BilibiliRoom();
+
+        @Config.Name("斗鱼直播间配置")
+        public DouyuRoom douyuRoom = new DouyuRoom();
+
+        @Config.Name("虎牙直播间配置")
+        public HuyaRoom huyaRoom = new HuyaRoom();
+
+        @Config.Name("触手直播间配置")
+        public ChushouRoom chushouRoom = new ChushouRoom();
+
+        @Config.Name("熊猫直播间配置")
+        public PandaRoom pandaRoom = new PandaRoom();
+
+        public class BilibiliRoom {
+            @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+            @Config.Name("直播房间号")
+            @Config.RangeInt(min = 0)
+            public int liveRoom = 0;
+
+            @Config.Comment("代表信息来源的标识符，显示在开头")
+            @Config.Name("自定义直播平台名称")
+            public String platformDisplayName = "哔哩哔哩";
+        }
+
+        public class DouyuRoom {
+            @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+            @Config.Name("直播房间号")
+            @Config.RangeInt(min = 0)
+            public int liveRoom = 0;
+
+            @Config.Comment("代表信息来源的标识符，显示在开头")
+            @Config.Name("自定义直播平台名称")
+            public String platformDisplayName = "斗鱼";
+        }
+
+        public class HuyaRoom {
+            @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+            @Config.Name("直播房间号")
+            @Config.RangeInt(min = 0)
+            public int liveRoom = 0;
+
+            @Config.Comment("代表信息来源的标识符，显示在开头")
+            @Config.Name("自定义直播平台名称")
+            public String platformDisplayName = "虎牙";
+        }
+
+        public class ChushouRoom {
+            @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+            @Config.Name("直播房间号")
+            @Config.RangeInt(min = 0)
+            public int liveRoom = 0;
+
+            @Config.Comment("代表信息来源的标识符，显示在开头")
+            @Config.Name("自定义直播平台名称")
+            public String platformDisplayName = "触手";
+        }
+
+        public class PandaRoom {
+            @Config.Comment("直播间房间号，我想你们应该知道在哪获取")
+            @Config.Name("直播房间号")
+            @Config.RangeInt(min = 0)
+            public int liveRoom = 0;
+
+            @Config.Comment("代表信息来源的标识符，显示在开头")
+            @Config.Name("自定义直播平台名称")
+            public String platformDisplayName = "熊猫";
+        }
     }
 
     public static class Network {

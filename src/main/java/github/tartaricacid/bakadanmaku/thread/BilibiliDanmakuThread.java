@@ -42,7 +42,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     public boolean preRunCheck() {
         boolean check = super.preRunCheck();
         // 处理直播房间未设置的问题
-        if (BakaDanmakuConfig.bilibiliRoom.liveRoom == 0) {
+        if (BakaDanmakuConfig.livePlatform.bilibiliRoom.liveRoom == 0) {
             sendChatMessage("§8§l直播房间 ID 未设置，弹幕姬已停止工作！ ");
             check = false;
         }
@@ -53,7 +53,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     @Override
     public void doRun() {
         // 获取真实房间 ID
-        String roomID = getRoomId(BakaDanmakuConfig.bilibiliRoom.liveRoom);
+        String roomID = getRoomId(BakaDanmakuConfig.livePlatform.bilibiliRoom.liveRoom);
 
         // 提示，相关房间信息已经获取
         sendChatMessage("§8§l直播房间 ID 已经获取，ID 为 " + roomID);
@@ -115,7 +115,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
                         // Post PopularityEvent
-                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, num));
+                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, num));
                     }
 
                     if (action == 5) {
@@ -156,7 +156,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) ((ArrayList) infoList.get(2)).get(1);
 
                                 // Post DanmakuEvent
-                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, user, danmuMsg));
+                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user, danmuMsg));
                                 break;
                             }
 
@@ -171,7 +171,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) dataMap.get("uname");
 
                                 // Post GiftEvent
-                                MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, giftName, num, user));
+                                MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, giftName, num, user));
                                 break;
                             }
 
@@ -187,7 +187,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                 String user = (String) dataMap.get("uname");
 
                                 // Post WelcomeEvent
-                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.bilibiliRoom.platformDisplayName, user));
+                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user));
                                 break;
                             }
 
