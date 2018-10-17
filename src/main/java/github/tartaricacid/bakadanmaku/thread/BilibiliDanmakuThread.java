@@ -1,9 +1,6 @@
 package github.tartaricacid.bakadanmaku.thread;
 
 import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.internal.LinkedTreeMap;
 import github.tartaricacid.bakadanmaku.BakaDanmaku;
 import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
@@ -22,7 +19,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -34,7 +30,17 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init"; // 获取真实直播房间号的 api 地址
 
     private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),"); // 用来读取 JSON 的正则表达式
-    private static Gson gson = new Gson(); // 等会用来读取 JSON 的
+
+    private static Pattern readCmd = Pattern.compile("\"cmd\":\"(.*?)\""); // 读取 CMD 的
+
+    private static Pattern readDanmakuUser = Pattern.compile("\\[\\d+,\"(.*?)\",\\d+"); // 读取弹幕发送者的
+    private static Pattern readDanmakuInfo = Pattern.compile("],\"(.*?)\",\\["); // 读取具体弹幕内容的
+
+    private static Pattern readGiftName = Pattern.compile("\"giftName\":\"(.*?)\""); // 读取礼物名称的
+    private static Pattern readGiftNum = Pattern.compile("\"num\":(\\d+)"); // 读取礼物数量的
+    private static Pattern readGiftUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取发送礼物者的
+
+    private static Pattern readWelcomeUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取欢迎玩家的
 
     private DataOutputStream dataOutputStream; // 等会读取数据流的
 
@@ -122,12 +128,10 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         // UTF-8 解码
                         String bodyString = new String(bodyByte, StandardCharsets.UTF_8);
 
-                        // 数据解析成 json
-                        Object o = gson.fromJson(bodyString, Object.class);
-
-                        // 数据解析
-                        LinkedTreeMap jsonMap = (LinkedTreeMap) o;
-                        String msgType = (String) jsonMap.get("cmd");
+                        // 数据解析，扒出 CMD 信息
+                        String msgType = ""; // 初始化
+                        Matcher mCmd = readCmd.matcher(bodyString);
+                        if (mCmd.find()) msgType = mCmd.group(1);
 
                         /*
                         DANMU_MSG	收到弹幕
@@ -149,29 +153,48 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
-                                ArrayList infoList = (ArrayList) jsonMap.get("info");
+                                // 配置管控，是否显示弹幕信息
+                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
+                                    break;
+                                }
 
-                                // 具体的发送者和信息
-                                String danmuMsg = (String) infoList.get(1);
-                                String user = (String) ((ArrayList) infoList.get(2)).get(1);
+                                // 正则匹配
+                                Matcher mDanmuMsg = readDanmakuInfo.matcher(bodyString);
+                                Matcher mUser = readDanmakuUser.matcher(bodyString);
 
-                                // Post DanmakuEvent
-                                MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user, danmuMsg));
+                                // 扒出具体的发送者和信息
+                                if (mDanmuMsg.find() && mUser.find()) {
+                                    String danmuMsg = mDanmuMsg.group(1);
+                                    String user = mUser.group(1);
+
+                                    // Post DanmakuEvent
+                                    MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user, danmuMsg));
+                                }
+
                                 break;
                             }
 
                             case "SEND_GIFT": {
-                                // 莫名会为空，加个判定再进行解析
-                                if (jsonMap.get("data") == null) continue;
-                                LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
+                                // 配置管控，是否显示礼物信息
+                                if (!BakaDanmakuConfig.chatMsg.showGift) {
+                                    break;
+                                }
 
-                                // 具体的送礼信息
-                                String giftName = (String) dataMap.get("giftName");
-                                int num = ((Double) dataMap.get("num")).intValue();
-                                String user = (String) dataMap.get("uname");
+                                // 正则匹配
+                                Matcher mGiftName = readGiftName.matcher(bodyString);
+                                Matcher mNum = readGiftNum.matcher(bodyString);
+                                Matcher mUser = readGiftUser.matcher(bodyString);
 
-                                // Post GiftEvent
-                                MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, giftName, num, user));
+                                // 扒出具体的送礼信息
+                                if (mGiftName.find() && mNum.find() && mUser.find()) {
+                                    String giftName = unicodeToString(mGiftName.group(1));
+                                    int num = Integer.valueOf(mNum.group(1));
+                                    String user = unicodeToString(mUser.group(1));
+
+                                    // Post GiftEvent
+                                    MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, giftName, num, user));
+                                }
+
                                 break;
                             }
 
@@ -181,13 +204,17 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     break;
                                 }
 
-                                LinkedTreeMap dataMap = (LinkedTreeMap) jsonMap.get("data");
+                                // 正则匹配
+                                Matcher mUser = readWelcomeUser.matcher(bodyString);
 
-                                // 具体的送礼信息
-                                String user = (String) dataMap.get("uname");
+                                // 具体的欢迎用户名
+                                if (mUser.find()) {
+                                    String user = mUser.group(1);
 
-                                // Post WelcomeEvent
-                                MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user));
+                                    // Post WelcomeEvent
+                                    MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user));
+                                }
+
                                 break;
                             }
 
@@ -200,8 +227,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
                         }
                     }
-                } catch (JsonSyntaxException | NumberFormatException eIn) {
-                    // 送礼数据解析可能会出现异常，捕捉一下
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -215,11 +240,10 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     }
 
     /**
-     * 清除部分，重载 Gson
+     * 清除部分
      */
     @Override
     public void clear() {
-        gson = new Gson();
     }
 
     /**
@@ -338,5 +362,32 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
         }
 
         return realRoomId;
+    }
+
+    /**
+     * 把十六进制Unicode编码字符串转换为中文字符串
+     * Ref: https://blog.csdn.net/wccmfc123/article/details/11610393
+     *
+     * @param str 传入的字符串，可能包含 16 位 Unicode 码
+     * @return 反转义后的字符串
+     */
+    public String unicodeToString(String str) {
+        // 获取内部的 U 码
+        Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+        Matcher matcher = pattern.matcher(str);
+
+        // 字符初始化
+        char ch;
+
+        // 开始逐个替换
+        while (matcher.find()) {
+            // 将扒出来的 Int 转换成 char 类型，因为 Java 默认是 UTF-8 编码，所以会自动转换成对应文字
+            ch = (char) Integer.parseInt(matcher.group(2), 16);
+
+            // 将 Unicode 码替换成对应文字，注意后面用了一个隐式类型转换
+            str = str.replace(matcher.group(1), ch + "");
+        }
+
+        return str;
     }
 }

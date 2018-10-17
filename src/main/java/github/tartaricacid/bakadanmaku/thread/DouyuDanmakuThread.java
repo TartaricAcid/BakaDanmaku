@@ -121,7 +121,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             }
 
             // 发送分组信息
-            sendDataPack((short) 689, String.format("type@=joingroup/rid@=%s/gid@=-9999", roomID));
+            sendDataPack(String.format("type@=joingroup/rid@=%s/gid@=-9999", roomID));
 
             // 轮询接收弹幕
             while (keepRunning) {
@@ -201,7 +201,7 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                 }
             }
 
-            sendDataPack((short) 689, "type@=logout/"); // 发送断开包
+            sendDataPack("type@=logout/"); // 发送断开包
             timer.cancel(); // 关闭心跳包线程的定时器
             socket.close(); // 关闭 socket
         } catch (IOException ioe) {
@@ -236,14 +236,14 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
      */
     private void sendJoinMsg(String roomId) {
         // 发送验证包
-        sendDataPack((short) 689, String.format("type@=loginreq/roomid@=%s/", roomId));
+        sendDataPack(String.format("type@=loginreq/roomid@=%s/", roomId));
     }
 
     /**
      * 客户端发送的心跳包，45 秒发送一次
      */
     private void sendHeartBeat() {
-        sendDataPack((short) 689, "type@=mrkl/");
+        sendDataPack("type@=mrkl/");
     }
 
     /**
@@ -286,10 +286,9 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
     /**
      * 固定的发包方法
      *
-     * @param action 消息类型，消息类型有 689（C->S） 和 690（S->C）
-     * @param body   发送的数据本体部分
+     * @param body 发送的数据本体部分
      */
-    private void sendDataPack(Short action, String body) {
+    private void sendDataPack(String body) {
         try {
             // 数据部分，要求以 \0 结尾，同时以 UTF-8 编码解析成 Byte
             body = body + '\0';
@@ -306,8 +305,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             byteBuffer.putInt(BigToLittle(length));
             byteBuffer.putInt(BigToLittle(length));
 
-            // 存入 2 字长的消息类型，消息类型有 689 和 690
-            byteBuffer.putShort(BigToLittle(action));
+            // 存入 2 字长的消息类型，消息类型有 689（C->S） 和 690（S->C）
+            byteBuffer.putShort(BigToLittle((short) 689));
 
             // 存入加密字段和保留字段，目前都为 0，总共 2 字长
             byteBuffer.putShort((short) 0);

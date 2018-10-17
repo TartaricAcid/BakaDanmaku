@@ -2,12 +2,17 @@ package github.tartaricacid.bakadanmaku.command;
 
 import github.tartaricacid.bakadanmaku.api.thread.BaseDanmakuThread;
 import github.tartaricacid.bakadanmaku.api.thread.DanmakuThreadFactory;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CommandBakaDM extends CommandBase {
     public static final String commandBakaDanmaku = "bakadm"; // 指令头
@@ -44,6 +49,7 @@ public class CommandBakaDM extends CommandBase {
                 DanmakuThreadFactory.restartThreads();
                 break;
             }
+
             // 开始指令
             case "start": {
                 if (args.length == 1) {
@@ -72,6 +78,7 @@ public class CommandBakaDM extends CommandBase {
                 }
                 break;
             }
+
             // 停止指令
             case "stop": {
                 if (args.length == 1) {
@@ -101,17 +108,52 @@ public class CommandBakaDM extends CommandBase {
                 }
                 break;
             }
+
             // 列出正在运行的所有弹幕线程
             case "running": {
                 BaseDanmakuThread.sendChatMessage("正在运行的弹幕线程：" + String.join("，", DanmakuThreadFactory.getRunningDanmakuThread()));
                 break;
             }
+
+            // 帮助指令
             case "help": {
                 BaseDanmakuThread.sendChatMessage(TextFormatting.RED + "用法：" + commandHelpText);
                 break;
             }
+
             default:
+                BaseDanmakuThread.sendChatMessage(TextFormatting.RED + "用法：" + commandHelpText);
                 break;
         }
+    }
+
+    /**
+     * Tab 补全具体实现
+     */
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+        // 存入当前可用指令，这个是给遍历用的
+        List<String> listIn = new ArrayList<>(Arrays.asList("restart", "start", "stop", "running", "help"));
+
+        // 如果没写参数，返回整个列表
+        if (args.length == 0) {
+            return listIn;
+        }
+
+        // 写入第一个参数，依据输入内容头部检索，返回符合的
+        if (args.length == 1) {
+            // 因为不能同时遍历 list 时删除 list 元素，故需要创建一个 list 存储输入出的 list
+            List<String> listOut = new ArrayList<>();
+
+            // 遍历参数
+            for (String str : listIn) {
+                // 不是的部分，剔除
+                if (str.indexOf(args[0]) == 0) listOut.add(str);
+            }
+
+            return listOut;
+        }
+
+        return null;
     }
 }
