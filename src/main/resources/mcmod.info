@@ -2,10 +2,10 @@
   {
     "modid": "baka_danmaku",
     "name": "Baka Danmaku",
-    "description": "A danmaku mod for bilibili",
+    "description": "Minecraft 直播弹幕姬模组，致力于兼容国内主流直播平台",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "",
+    "url": "https://github.com/TartaricAcid/BakaDanmaku",
     "updateUrl": "",
     "authorList": [
       "TartaricAcid",
