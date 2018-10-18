@@ -14,7 +14,6 @@ import org.apache.commons.lang3.RandomUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -121,7 +120,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
                         // Post PopularityEvent
-                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, num));
+                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                num));
                     }
 
                     if (action == 5) {
@@ -134,23 +134,23 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         if (mCmd.find()) msgType = mCmd.group(1);
 
                         /*
-                        DANMU_MSG	收到弹幕
-                        SEND_GIFT	有人送礼
-                        WELCOME	欢迎加入房间
-                        WELCOME_GUARD	欢迎房管加入房间
-                        SYS_MSG	系统消息
-                        NOTICE_MSG 也是系统信息
-                        ENTRY_EFFECT 舰长进入房间信息
-                        COMBO_SEND 连击礼物起始
-                        COMBO_END 连击礼物结束
-                        ROOM_RANK 周星榜
-                        GUARD_MSG 开通舰长信息
-                        GUARD_BUY 舰长购买信息
-                        GUARD_LOTTERY_START 购买舰长后抽奖信息
-                        RAFFLE_END 抽奖结果
-                        SPECIAL_GIFT 神奇的东西，不知道是啥
-                        WISH_BOTTLE 这又是啥
-                        */
+                         * DANMU_MSG	收到弹幕
+                         * SEND_GIFT	有人送礼
+                         * WELCOME	欢迎加入房间
+                         * WELCOME_GUARD	欢迎房管加入房间
+                         * SYS_MSG	系统消息
+                         * NOTICE_MSG 也是系统信息
+                         * ENTRY_EFFECT 舰长进入房间信息
+                         * COMBO_SEND 连击礼物起始
+                         * COMBO_END 连击礼物结束
+                         * ROOM_RANK 周星榜
+                         * GUARD_MSG 开通舰长信息
+                         * GUARD_BUY 舰长购买信息
+                         * GUARD_LOTTERY_START 购买舰长后抽奖信息
+                         * RAFFLE_END 抽奖结果
+                         * SPECIAL_GIFT 神奇的东西，不知道是啥
+                         * WISH_BOTTLE 这又是啥
+                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
                                 // 配置管控，是否显示弹幕信息
@@ -168,7 +168,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = mUser.group(1);
 
                                     // Post DanmakuEvent
-                                    MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user, danmuMsg));
+                                    MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            user, danmuMsg));
                                 }
 
                                 break;
@@ -192,7 +193,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = unicodeToString(mUser.group(1));
 
                                     // Post GiftEvent
-                                    MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, giftName, num, user));
+                                    MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            giftName, num, user));
                                 }
 
                                 break;
@@ -212,7 +214,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = mUser.group(1);
 
                                     // Post WelcomeEvent
-                                    MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user));
+                                    MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            user));
                                 }
 
                                 break;
@@ -244,19 +247,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      */
     @Override
     public void clear() {
-    }
-
-    /**
-     * 首次连接之前测试网络连通性
-     *
-     * @return 能否找到 Bilibili 弹幕服务器
-     */
-    private boolean isReachable() {
-        try {
-            return InetAddress.getByName(LIVE_URL).isReachable(BakaDanmakuConfig.network.timeout);
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -371,7 +361,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      * @param str 传入的字符串，可能包含 16 位 Unicode 码
      * @return 反转义后的字符串
      */
-    public String unicodeToString(String str) {
+    private String unicodeToString(String str) {
         // 获取内部的 U 码
         Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
         Matcher matcher = pattern.matcher(str);
