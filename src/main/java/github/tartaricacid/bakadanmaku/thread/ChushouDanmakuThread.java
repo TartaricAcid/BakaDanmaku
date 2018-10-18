@@ -32,7 +32,7 @@ public class ChushouDanmakuThread extends BaseDanmakuThread {
      *
      * @param room 触手直播房间号
      */
-    private static void getInfo(int room) {
+    private void getInfo(int room) {
         try {
             // 触手提供的获取直播弹幕的 api
             URL url = new URL(URL_API + "?roomId=" + room);
@@ -137,7 +137,7 @@ public class ChushouDanmakuThread extends BaseDanmakuThread {
                 // 加一个判定，防止最后一个定时执行还是进行了
                 if (keepRunning) getInfo(BakaDanmakuConfig.livePlatform.chushouRoom.liveRoom);
             }
-        }, 3000, 50);
+        }, 500, 1000);
     }
 
     @Override
