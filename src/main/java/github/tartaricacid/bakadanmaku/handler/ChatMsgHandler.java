@@ -77,12 +77,16 @@ public class ChatMsgHandler {
      */
     @SubscribeEvent
     public static void showPopularityCount(RenderGameOverlayEvent.Post e) {
-        GuiIngame gui = Minecraft.getMinecraft().ingameGUI;
-        FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+        GuiIngame gui = Minecraft.getMinecraft().ingameGUI; // 获取 Minecraft 实例中的 GUI
+        FontRenderer renderer = Minecraft.getMinecraft().fontRenderer; // 获取 Minecraft 原版字体渲染器
 
         // 当渲染快捷栏时候进行显示，意味着 F1 会隐藏
         if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.general.showPopularity) {
-            gui.drawString(renderer, String.format(BakaDanmakuConfig.general.popularityStyle, String.valueOf(tmpPopularityCount)), 5, 5, 0xffffff);
+            int x = (Minecraft.getMinecraft().displayWidth * BakaDanmakuConfig.general.posX) / 100; // 获取的配置宽度百分比
+            int y = (Minecraft.getMinecraft().displayHeight * BakaDanmakuConfig.general.posY) / 100; // 获取的配置高度百分比
+
+            gui.drawString(renderer, String.format(BakaDanmakuConfig.general.popularityStyle, String.valueOf(tmpPopularityCount)),
+                    x, y, BakaDanmakuConfig.general.color);
         }
     }
 }

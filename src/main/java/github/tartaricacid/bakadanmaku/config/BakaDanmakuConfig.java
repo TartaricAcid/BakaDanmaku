@@ -35,6 +35,21 @@ public class BakaDanmakuConfig {
         @Config.Comment("显示的人气值格式，注意格式符")
         @Config.Name("人气值格式")
         public String popularityStyle = "§6§l人气值: %1$s";
+
+        @Config.Comment("人气值显示位置（横向，百分制）")
+        @Config.Name("人气值位置横向百分比")
+        @Config.RangeInt(min = 0, max = 100)
+        public int posX = 1;
+
+        @Config.Comment("人气值显示位置（纵向，向百分制）")
+        @Config.Name("人气值位置纵向百分比")
+        @Config.RangeInt(min = 0, max = 100)
+        public int posY = 1;
+
+        @Config.Comment("人气值显示阴影颜色（RGB）")
+        @Config.Name("人气值文字显示阴影")
+        @Config.RangeInt(min = 0x000000, max = 0xFFFFFF)
+        public int color = 0xFFFFFF;
     }
 
     public static class ChatMsg {
