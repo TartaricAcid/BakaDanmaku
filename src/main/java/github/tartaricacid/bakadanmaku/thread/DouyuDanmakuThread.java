@@ -399,7 +399,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
             sendChatMessage("§8§l弹幕姬已经连接");
 
             // 直播热度值获取，Post PopularityEvent
-            MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, getHotValue()));
+            MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName,
+                    getHotValue()));
 
             // 创建定时器
             Timer timer = new Timer();
@@ -411,7 +412,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                     sendHeartBeat();
 
                     // 直播热度值更新，Post PopularityEvent
-                    MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, getHotValue()));
+                    MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName,
+                            getHotValue()));
                 }
             }, 45000, 45000);
 
@@ -478,7 +480,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             String user = mUser.group(1); // 发送者
 
                             // Post DanmakuEvent
-                            MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, user, danmuMsg));
+                            MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName,
+                                    user, danmuMsg));
 
                             continue;
                         }
@@ -498,7 +501,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             int num = Integer.valueOf(mNum.group(1)); // 礼物数量
 
                             // Post GiftEvent
-                            MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, giftName, num, user));
+                            MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName,
+                                    giftName, num, user));
 
                             continue;
                         }
@@ -514,7 +518,8 @@ public class DouyuDanmakuThread extends BaseDanmakuThread {
                             String user = mUser.group(1); // 玩家名称
 
                             // Post WelcomeEvent
-                            MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName, user));
+                            MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.douyuRoom.platformDisplayName,
+                                    user));
                         }
                     }
                 } catch (Exception e) {

@@ -30,7 +30,7 @@ public class CommandBakaDM extends CommandBase {
 
     @Override
     public int getRequiredPermissionLevel() {
-        return 1; // 让任意玩家可以执行此指令
+        return 0; // 让任意玩家可以执行此指令
     }
 
     @Override

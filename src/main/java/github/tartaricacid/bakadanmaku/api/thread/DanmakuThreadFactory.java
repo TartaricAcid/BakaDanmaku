@@ -126,7 +126,7 @@ public class DanmakuThreadFactory {
      */
     public static void restartThreads() {
         getRunningDanmakuThread().forEach(DanmakuThreadFactory::stopThread);
-        for (String p : BakaDanmakuConfig.general.platform.split(",")) {
+        for (String p : BakaDanmakuConfig.livePlatform.platform.split(",")) {
             runThread(p.trim());
         }
     }

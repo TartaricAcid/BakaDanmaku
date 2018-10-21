@@ -14,7 +14,6 @@ import org.apache.commons.lang3.RandomUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -30,16 +29,12 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init"; // 获取真实直播房间号的 api 地址
 
     private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),"); // 用来读取 JSON 的正则表达式
-
     private static Pattern readCmd = Pattern.compile("\"cmd\":\"(.*?)\""); // 读取 CMD 的
-
     private static Pattern readDanmakuUser = Pattern.compile("\\[\\d+,\"(.*?)\",\\d+"); // 读取弹幕发送者的
     private static Pattern readDanmakuInfo = Pattern.compile("],\"(.*?)\",\\["); // 读取具体弹幕内容的
-
     private static Pattern readGiftName = Pattern.compile("\"giftName\":\"(.*?)\""); // 读取礼物名称的
     private static Pattern readGiftNum = Pattern.compile("\"num\":(\\d+)"); // 读取礼物数量的
     private static Pattern readGiftUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取发送礼物者的
-
     private static Pattern readWelcomeUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取欢迎玩家的
 
     private DataOutputStream dataOutputStream; // 等会读取数据流的
@@ -112,16 +107,12 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                      5：弹幕
                     */
                     if (action == 3) {
-                        // 配置管控，是否显示人气值信息
-                        if (!BakaDanmakuConfig.general.showPopularity) {
-                            continue;
-                        }
-
                         // byte 数组数据转 Int
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
                         // Post PopularityEvent
-                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, num));
+                        MinecraftForge.EVENT_BUS.post(new PopularityEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                num));
                     }
 
                     if (action == 5) {
@@ -134,30 +125,25 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                         if (mCmd.find()) msgType = mCmd.group(1);
 
                         /*
-                        DANMU_MSG	收到弹幕
-                        SEND_GIFT	有人送礼
-                        WELCOME	欢迎加入房间
-                        WELCOME_GUARD	欢迎房管加入房间
-                        SYS_MSG	系统消息
-                        NOTICE_MSG 也是系统信息
-                        ENTRY_EFFECT 舰长进入房间信息
-                        COMBO_SEND 连击礼物起始
-                        COMBO_END 连击礼物结束
-                        ROOM_RANK 周星榜
-                        GUARD_MSG 开通舰长信息
-                        GUARD_BUY 舰长购买信息
-                        GUARD_LOTTERY_START 购买舰长后抽奖信息
-                        RAFFLE_END 抽奖结果
-                        SPECIAL_GIFT 神奇的东西，不知道是啥
-                        WISH_BOTTLE 这又是啥
-                        */
+                         * DANMU_MSG	收到弹幕
+                         * SEND_GIFT	有人送礼
+                         * WELCOME	欢迎加入房间
+                         * WELCOME_GUARD	欢迎房管加入房间
+                         * SYS_MSG	系统消息
+                         * NOTICE_MSG 也是系统信息
+                         * ENTRY_EFFECT 舰长进入房间信息
+                         * COMBO_SEND 连击礼物起始
+                         * COMBO_END 连击礼物结束
+                         * ROOM_RANK 周星榜
+                         * GUARD_MSG 开通舰长信息
+                         * GUARD_BUY 舰长购买信息
+                         * GUARD_LOTTERY_START 购买舰长后抽奖信息
+                         * RAFFLE_END 抽奖结果
+                         * SPECIAL_GIFT 神奇的东西，不知道是啥
+                         * WISH_BOTTLE 这又是啥
+                         */
                         switch (msgType) {
                             case "DANMU_MSG": {
-                                // 配置管控，是否显示弹幕信息
-                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mDanmuMsg = readDanmakuInfo.matcher(bodyString);
                                 Matcher mUser = readDanmakuUser.matcher(bodyString);
@@ -168,18 +154,14 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = mUser.group(1);
 
                                     // Post DanmakuEvent
-                                    MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user, danmuMsg));
+                                    MinecraftForge.EVENT_BUS.post(new DanmakuEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            user, danmuMsg));
                                 }
 
                                 break;
                             }
 
                             case "SEND_GIFT": {
-                                // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.chatMsg.showGift) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mGiftName = readGiftName.matcher(bodyString);
                                 Matcher mNum = readGiftNum.matcher(bodyString);
@@ -192,18 +174,14 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = unicodeToString(mUser.group(1));
 
                                     // Post GiftEvent
-                                    MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, giftName, num, user));
+                                    MinecraftForge.EVENT_BUS.post(new GiftEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            giftName, num, user));
                                 }
 
                                 break;
                             }
 
                             case "WELCOME": {
-                                // 配置管控，是否显示欢迎信息
-                                if (!BakaDanmakuConfig.chatMsg.showWelcome) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mUser = readWelcomeUser.matcher(bodyString);
 
@@ -212,7 +190,8 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                                     String user = mUser.group(1);
 
                                     // Post WelcomeEvent
-                                    MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName, user));
+                                    MinecraftForge.EVENT_BUS.post(new WelcomeEvent(BakaDanmakuConfig.livePlatform.bilibiliRoom.platformDisplayName,
+                                            user));
                                 }
 
                                 break;
@@ -244,19 +223,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      */
     @Override
     public void clear() {
-    }
-
-    /**
-     * 首次连接之前测试网络连通性
-     *
-     * @return 能否找到 Bilibili 弹幕服务器
-     */
-    private boolean isReachable() {
-        try {
-            return InetAddress.getByName(LIVE_URL).isReachable(BakaDanmakuConfig.network.timeout);
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -371,7 +337,7 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      * @param str 传入的字符串，可能包含 16 位 Unicode 码
      * @return 反转义后的字符串
      */
-    public String unicodeToString(String str) {
+    private String unicodeToString(String str) {
         // 获取内部的 U 码
         Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
         Matcher matcher = pattern.matcher(str);
