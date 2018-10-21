@@ -9,9 +9,10 @@ public class DanmakuEvent extends BaseDanmakuEvent {
 
     /**
      * 弹幕事件
+     *
      * @param platform 平台名
-     * @param user 发送弹幕的用户名称
-     * @param msg 发送弹幕的内容
+     * @param user     发送弹幕的用户名称
+     * @param msg      发送弹幕的内容
      */
     public DanmakuEvent(String platform, String user, String msg) {
         super(platform);

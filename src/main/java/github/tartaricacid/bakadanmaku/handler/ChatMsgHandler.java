@@ -16,6 +16,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = BakaDanmaku.MOD_ID)
 public class ChatMsgHandler {
     private static int tmpPopularityCount = 0; // 临时静态变量，缓存人气值数据，在两个事件间传递
@@ -28,8 +31,33 @@ public class ChatMsgHandler {
     @SubscribeEvent
     public static void receiveDanmaku(DanmakuEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
+        Pattern readDanmakuUser = Pattern.compile(BakaDanmakuConfig.blockFunction.blockPlayer); // 屏蔽弹幕发送者
+        Pattern readDanmakuMsg = Pattern.compile(BakaDanmakuConfig.blockFunction.blockDanmaku); // 屏蔽弹幕关键词
+
+        // 先判定是否开启弹幕显示
         if (player != null && BakaDanmakuConfig.chatMsg.showDanmaku) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle, e.getPlatform(), e.getUser(), e.getMsg())));
+            // 获取弹幕信息
+            String msg = e.getMsg();
+
+            // 进行格式符消除，关键词屏蔽
+            if (BakaDanmakuConfig.blockFunction.blockFormatCode) {
+                // 替换消除格式符
+                msg = e.getMsg().replaceAll("§[0-9a-fk-or]", "");
+
+                // 如果不为空，消除关键词
+                if (!BakaDanmakuConfig.blockFunction.blockKeyword.isEmpty())
+                    msg = msg.replaceAll(BakaDanmakuConfig.blockFunction.blockKeyword, "*");
+            }
+
+            // 进行指定玩家屏蔽，指定弹幕屏蔽
+            Matcher mUser = readDanmakuUser.matcher(e.getUser());
+            Matcher mMsg = readDanmakuMsg.matcher(msg);
+            // 没找到，或者对应列表为空
+            if ((!mUser.find() || BakaDanmakuConfig.blockFunction.blockPlayer.isEmpty())
+                    && (!mMsg.find() || BakaDanmakuConfig.blockFunction.blockDanmaku.isEmpty())) {
+                player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.danmakuStyle,
+                        e.getPlatform(), e.getUser(), msg)));
+            }
         }
     }
 
@@ -41,8 +69,17 @@ public class ChatMsgHandler {
     @SubscribeEvent
     public static void receiveGift(GiftEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
+        Pattern readGiftName = Pattern.compile(BakaDanmakuConfig.blockFunction.blockGift); // 屏蔽礼物
+
+        // 先判定是否开启礼物显示
         if (player != null && BakaDanmakuConfig.chatMsg.showGift) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle, e.getPlatform(), e.getUser(), e.getGiftName(), e.getNum())));
+            // 进行礼物屏蔽
+            Matcher mGift = readGiftName.matcher(e.getGiftName());
+            // 没找到，或者对应列表为空
+            if (!mGift.find() || BakaDanmakuConfig.blockFunction.blockGift.isEmpty()) {
+                player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle,
+                        e.getPlatform(), e.getUser(), e.getGiftName(), e.getNum())));
+            }
         }
     }
 
@@ -54,8 +91,17 @@ public class ChatMsgHandler {
     @SubscribeEvent
     public static void welcome(WelcomeEvent e) {
         EntityPlayer player = Minecraft.getMinecraft().player;
+        Pattern readWelcome = Pattern.compile(BakaDanmakuConfig.blockFunction.blockWelcome); // 屏蔽欢迎玩家
+
+        // 先判定是否显示欢迎信息
         if (player != null && BakaDanmakuConfig.chatMsg.showWelcome) {
-            player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.welcomeStyle, e.getPlatform(), e.getUser())));
+            // 进行玩家屏蔽
+            Matcher mWelcome = readWelcome.matcher(e.getUser());
+            // 没找到，或者对应列表为空
+            if (!mWelcome.find() || BakaDanmakuConfig.blockFunction.blockWelcome.isEmpty()) {
+                player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.welcomeStyle,
+                        e.getPlatform(), e.getUser())));
+            }
         }
     }
 

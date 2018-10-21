@@ -29,16 +29,12 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
     private static final String INIT_URL = "https://api.live.bilibili.com/room/v1/Room/room_init"; // 获取真实直播房间号的 api 地址
 
     private static Pattern extractRoomId = Pattern.compile("\"room_id\":(\\d+),"); // 用来读取 JSON 的正则表达式
-
     private static Pattern readCmd = Pattern.compile("\"cmd\":\"(.*?)\""); // 读取 CMD 的
-
     private static Pattern readDanmakuUser = Pattern.compile("\\[\\d+,\"(.*?)\",\\d+"); // 读取弹幕发送者的
     private static Pattern readDanmakuInfo = Pattern.compile("],\"(.*?)\",\\["); // 读取具体弹幕内容的
-
     private static Pattern readGiftName = Pattern.compile("\"giftName\":\"(.*?)\""); // 读取礼物名称的
     private static Pattern readGiftNum = Pattern.compile("\"num\":(\\d+)"); // 读取礼物数量的
     private static Pattern readGiftUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取发送礼物者的
-
     private static Pattern readWelcomeUser = Pattern.compile("\"uname\":\"(.*?)\""); // 读取欢迎玩家的
 
     private DataOutputStream dataOutputStream; // 等会读取数据流的
@@ -111,11 +107,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                      5：弹幕
                     */
                     if (action == 3) {
-                        // 配置管控，是否显示人气值信息
-                        if (!BakaDanmakuConfig.general.showPopularity) {
-                            continue;
-                        }
-
                         // byte 数组数据转 Int
                         int num = ByteBuffer.wrap(bodyByte).getInt();
 
@@ -153,11 +144,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                          */
                         switch (msgType) {
                             case "DANMU_MSG": {
-                                // 配置管控，是否显示弹幕信息
-                                if (!BakaDanmakuConfig.chatMsg.showDanmaku) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mDanmuMsg = readDanmakuInfo.matcher(bodyString);
                                 Matcher mUser = readDanmakuUser.matcher(bodyString);
@@ -176,11 +162,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "SEND_GIFT": {
-                                // 配置管控，是否显示礼物信息
-                                if (!BakaDanmakuConfig.chatMsg.showGift) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mGiftName = readGiftName.matcher(bodyString);
                                 Matcher mNum = readGiftNum.matcher(bodyString);
@@ -201,11 +182,6 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
                             }
 
                             case "WELCOME": {
-                                // 配置管控，是否显示欢迎信息
-                                if (!BakaDanmakuConfig.chatMsg.showWelcome) {
-                                    break;
-                                }
-
                                 // 正则匹配
                                 Matcher mUser = readWelcomeUser.matcher(bodyString);
 

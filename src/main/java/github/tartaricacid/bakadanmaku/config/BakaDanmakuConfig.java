@@ -23,11 +23,10 @@ public class BakaDanmakuConfig {
     @Config.Name("直播平台设置")
     public static LivePlatform livePlatform = new LivePlatform();
 
-    public static class General {
-        @Config.Comment("直播平台选择，可填 bilibili 和 douyu")
-        @Config.Name("直播平台")
-        public String platform = "bilibili";
+    @Config.Name("屏蔽相关设置")
+    public static BlockFunction blockFunction = new BlockFunction();
 
+    public static class General {
         @Config.Comment("是否显示人气值信息")
         @Config.Name("是否显示人气值")
         public Boolean showPopularity = true;
@@ -79,6 +78,10 @@ public class BakaDanmakuConfig {
     }
 
     public static class LivePlatform {
+        @Config.Comment("直播平台选择，可填 bilibili 和 douyu 以及 chushou")
+        @Config.Name("直播平台")
+        public String platform = "bilibili";
+
         @Config.Name("哔哩哔哩直播间配置")
         public BilibiliRoom bilibiliRoom = new BilibiliRoom();
 
@@ -122,6 +125,32 @@ public class BakaDanmakuConfig {
         }
     }
 
+    public static class BlockFunction {
+        @Config.Comment("屏蔽 Minecraft 样式代码，防止部分玩家过度玩耍刷屏")
+        @Config.Name("是否屏蔽样式代码")
+        public Boolean blockFormatCode = false;
+
+        @Config.Comment("屏蔽指定用户名观众发布的弹幕，支持正则表达式")
+        @Config.Name("屏蔽用户名")
+        public String blockPlayer = "";
+
+        @Config.Comment("屏蔽指定关键词弹幕发，支持正则表达式\n（是包含该关键词直接不显示，而不是以 ** 方式消除）")
+        @Config.Name("屏蔽弹幕关键词")
+        public String blockDanmaku = "";
+
+        @Config.Comment("消除指定弹幕关键词，支持正则表达式\n（是包含的关键词以 ** 方式消除）")
+        @Config.Name("消除弹幕关键词")
+        public String blockKeyword = "";
+
+        @Config.Comment("屏蔽指定礼物信息，支持正则表达式")
+        @Config.Name("屏蔽礼物")
+        public String blockGift = "";
+
+        @Config.Comment("屏蔽指定用户名观众欢迎信息，支持正则表达式")
+        @Config.Name("屏蔽观众欢迎")
+        public String blockWelcome = "";
+    }
+
     public static class Network {
         @Config.Comment("测试网络连通性时的超时时间")
         @Config.Name("超时时间")
@@ -153,8 +182,8 @@ public class BakaDanmakuConfig {
                     // 提示信息
                     BaseDanmakuThread.sendChatMessage("§8§l配置已经保存，正在重启中……");
 
-                    // 重载房间信息，单独开启一个线程，防止卡死游戏主线程
-                    new Thread(DanmakuThreadFactory::restartThreads, "BakaDanmakuChangeConfig").start();
+                    // 重载房间信息
+                    DanmakuThreadFactory.restartThreads();
                 }
             }
         }
