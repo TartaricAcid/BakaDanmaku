@@ -9,6 +9,7 @@ import github.tartaricacid.bakadanmaku.thread.BilibiliDanmakuThread;
 import github.tartaricacid.bakadanmaku.thread.ChushouDanmakuThread;
 import github.tartaricacid.bakadanmaku.thread.DouyuDanmakuThread;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -44,11 +45,8 @@ public class BakaDanmaku {
 
         // 注册屏幕信息事件处理器
         MinecraftForge.EVENT_BUS.register(ScreenMsgHandler.class);
-    }
 
-    @Mod.EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {
-        // 注册本模组指令
-        event.registerServerCommand(new CommandBakaDM());
+        // 注册命令
+        ClientCommandHandler.instance.registerCommand(new CommandBakaDM());
     }
 }
