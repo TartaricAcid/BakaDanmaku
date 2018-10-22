@@ -8,16 +8,15 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.IClientCommand;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandBakaDM extends CommandBase implements IClientCommand {
-    public static final String commandBakaDanmaku = "bakadm"; // 指令头
-    public static final String commandHelpText = "/bakadm [子命令] [参数]\n子命令：start，stop，restart，running"; // 帮助
+public class CommandBakaDM extends CommandBase {
+    private static final String commandBakaDanmaku = "bakadm"; // 指令头
+    private static final String commandHelpText = "/bakadm [子命令] [参数]\n子命令：start，stop，restart，running"; // 帮助
 
     @Override
     public String getName() {
@@ -156,10 +155,5 @@ public class CommandBakaDM extends CommandBase implements IClientCommand {
         }
 
         return null;
-    }
-
-    @Override
-    public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
-        return false;
     }
 }

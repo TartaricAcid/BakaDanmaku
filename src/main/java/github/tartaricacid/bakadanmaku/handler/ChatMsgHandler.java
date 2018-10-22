@@ -41,8 +41,8 @@ public class ChatMsgHandler {
 
             // 进行格式符消除，关键词屏蔽
             if (BakaDanmakuConfig.blockFunction.blockFormatCode) {
-                // 替换消除格式符
-                msg = e.getMsg().replaceAll("§[0-9a-fk-or]", "");
+                // 替换消除格式符，更有效的祛除格式符
+                msg = e.getMsg().replaceAll("(?:§(?=§*(\\1?+[0-9a-fk-or])))+\\1", "");
 
                 // 如果不为空，消除关键词
                 if (!BakaDanmakuConfig.blockFunction.blockKeyword.isEmpty())
