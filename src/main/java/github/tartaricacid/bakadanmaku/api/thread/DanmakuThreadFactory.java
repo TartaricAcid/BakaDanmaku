@@ -5,13 +5,13 @@ import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class DanmakuThreadFactory {
     // 存储弹幕线程的 HashMap
-    private static final HashMap<String, BaseDanmakuThread> danmakuThreads = new HashMap<>();
-    private static final HashMap<String, Thread> realDanmakuThreads = new HashMap<>();
+    private static final HashMap<String, BaseDanmakuThread> danmakuThreads = new HashMap<>(); // 未启动的弹幕线程
+    private static final HashMap<String, Thread> realDanmakuThreads = new HashMap<>(); // 正在运行的弹幕线程
 
     /**
      * 向 danmakuThreads 中添加新的 DanmakuThread 类型
@@ -49,13 +49,15 @@ public class DanmakuThreadFactory {
      * @param platform 平台名
      */
     public static void runThread(String platform) {
+        // 先获取当前正在运行的弹幕线程
         BaseDanmakuThread dmThread = getDanmakuThread(platform);
 
+        // 如果正在运行的弹幕线程为空
         if (dmThread != null) {
-            // 将指示参数设定为 true
+            // 将弹幕开启的指示参数设定为 true
             dmThread.keepRunning = true;
 
-            // new 线程，并启动
+            // 而后重新 new 线程，并启动线程
             Thread threadToRun = new Thread(dmThread, platform + "DanmakuThread");
             threadToRun.start();
 
@@ -76,14 +78,17 @@ public class DanmakuThreadFactory {
      * @param restart  是否再次启动该线程
      */
     public static void stopThread(String platform, boolean restart) {
+        // 先获取当前正在运行的弹幕线程
         BaseDanmakuThread th = getDanmakuThread(platform);
 
+        // 如果正在运行的弹幕线程为空
         if (th != null) {
+            // 创建新线程，因为关闭弹幕线程是有阻塞的
             new Thread(() -> {
-                // 关闭线程标识符
+                // 先关闭线程标识符，借此关闭所有弹幕线程
                 th.keepRunning = false;
 
-                // 阻塞，等待线程关闭，注意不要在主线程操作此方法
+                // 阻塞，等待弹幕线程关闭
                 while (realDanmakuThreads.get(platform).isAlive()) ;
 
                 // 在运行线程表中移除该线程
@@ -92,6 +97,7 @@ public class DanmakuThreadFactory {
                 // 清空线程
                 th.clear();
 
+                // 如果 restart，则再次启动线程
                 if (restart) runThread(platform);
             }, "Stop" + platform + "DanmakuThread").start();
         }
@@ -138,26 +144,37 @@ public class DanmakuThreadFactory {
      * 重启所有线程 同样可以用于初始化时线程的启动
      */
     public static void restartThreads() {
-        // 获得 Trim 后的 platforms
+        // 获得所有的 platforms
         String[] _platforms = BakaDanmakuConfig.livePlatform.platform.split(",");
         for (int i = 0; i < _platforms.length; i++) {
-            _platforms[i] = _platforms[i].trim();
+            _platforms[i] = _platforms[i].trim(); // 剔除行首行尾空格
         }
 
+        // 获得所有的平台
         ArrayList<String> platforms = new ArrayList<>(Arrays.asList(_platforms));
+        // 获得正在运行的弹幕线程
         ArrayList<String> running = getRunningDanmakuThread();
 
+        // 创建一个 restart 数据，存入刚刚正在运行的弹幕线程列表
         ArrayList<String> restart = new ArrayList<>(running);
+        // 获得两者的交集
         restart.retainAll(platforms);
 
+        // 创建一个 toStop 数据，存入刚刚正在运行的弹幕线程列表
         ArrayList<String> toStop = new ArrayList<>(running);
+        // 获得两者的差集
         toStop.removeAll(platforms);
 
+        // 创建一个 toStart 数据，存入所有的平台列表
         ArrayList<String> toStart = new ArrayList<>(platforms);
+        // 获得两者的差集
         toStart.removeAll((getRunningDanmakuThread()));
 
+        // restart 部分，依次进行停止、并重启
         restart.forEach((platform) -> stopThread(platform, true));
+        // toStop 部分，依次进行停止
         toStop.forEach(DanmakuThreadFactory::stopThread);
+        // toStart 部分，依次进行开启
         toStart.forEach(DanmakuThreadFactory::runThread);
     }
 }
