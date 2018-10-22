@@ -254,6 +254,9 @@ public class BilibiliDanmakuThread extends BaseDanmakuThread {
      * @param body   发送的数据本体部分
      */
     private void sendDataPack(int action, String body) {
+        // 当停止线程时直接返回
+        if (!keepRunning) return;
+
         try {
             // 数据部分，以 UTF-8 编码解析成 Byte
             byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);

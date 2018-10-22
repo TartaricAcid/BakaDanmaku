@@ -6,6 +6,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class DanmakuThreadFactory {
     // 存储弹幕线程的 HashMap
@@ -72,8 +73,9 @@ public class DanmakuThreadFactory {
      * 停止指定平台的 DanmakuThread
      *
      * @param platform 平台名
+     * @param restart  是否再次启动该线程
      */
-    public static void stopThread(String platform) {
+    public static void stopThread(String platform, boolean restart) {
         BaseDanmakuThread th = getDanmakuThread(platform);
 
         if (th != null) {
@@ -89,8 +91,19 @@ public class DanmakuThreadFactory {
 
                 // 清空线程
                 th.clear();
+
+                if (restart) runThread(platform);
             }, "Stop" + platform + "DanmakuThread").start();
         }
+    }
+
+    /**
+     * 停止指定平台的 DanmakuThread
+     *
+     * @param platform 平台名
+     */
+    public static void stopThread(String platform) {
+        stopThread(platform, false);
     }
 
     /**
@@ -125,9 +138,26 @@ public class DanmakuThreadFactory {
      * 重启所有线程 同样可以用于初始化时线程的启动
      */
     public static void restartThreads() {
-        getRunningDanmakuThread().forEach(DanmakuThreadFactory::stopThread);
-        for (String p : BakaDanmakuConfig.livePlatform.platform.split(",")) {
-            runThread(p.trim());
+        // 获得 Trim 后的 platforms
+        String[] _platforms = BakaDanmakuConfig.livePlatform.platform.split(",");
+        for (int i = 0; i < _platforms.length; i++) {
+            _platforms[i] = _platforms[i].trim();
         }
+
+        ArrayList<String> platforms = new ArrayList<>(Arrays.asList(_platforms));
+        ArrayList<String> running = getRunningDanmakuThread();
+
+        ArrayList<String> restart = new ArrayList<>(running);
+        restart.retainAll(platforms);
+
+        ArrayList<String> toStop = new ArrayList<>(running);
+        toStop.removeAll(platforms);
+
+        ArrayList<String> toStart = new ArrayList<>(platforms);
+        toStart.removeAll((getRunningDanmakuThread()));
+
+        restart.forEach((platform) -> stopThread(platform, true));
+        toStop.forEach(DanmakuThreadFactory::stopThread);
+        toStart.forEach(DanmakuThreadFactory::runThread);
     }
 }

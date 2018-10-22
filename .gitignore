@@ -21,4 +21,5 @@ build
 eclipse
 run
 test
+classes
 httpRequests
