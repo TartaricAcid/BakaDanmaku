@@ -37,13 +37,13 @@ public class BakaDanmakuConfig {
 
         @Config.Comment("人气值显示位置（横向，百分制）")
         @Config.Name("人气值位置横向百分比")
-        @Config.RangeInt(min = 0, max = 100)
-        public int posX = 1;
+        @Config.RangeDouble(min = 0d, max = 100d)
+        public double posX = 0.618d;
 
         @Config.Comment("人气值显示位置（纵向，向百分制）")
         @Config.Name("人气值位置纵向百分比")
-        @Config.RangeInt(min = 0, max = 100)
-        public int posY = 1;
+        @Config.RangeDouble(min = 0d, max = 100d)
+        public double posY = 1.0d;
 
         @Config.Comment("人气值显示阴影颜色（RGB）")
         @Config.Name("人气值文字显示阴影")

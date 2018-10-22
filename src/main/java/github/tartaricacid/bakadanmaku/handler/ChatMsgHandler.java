@@ -128,11 +128,11 @@ public class ChatMsgHandler {
 
         // 当渲染快捷栏时候进行显示，意味着 F1 会隐藏
         if (e.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && gui != null && BakaDanmakuConfig.general.showPopularity) {
-            int x = (Minecraft.getMinecraft().displayWidth * BakaDanmakuConfig.general.posX) / 100; // 获取的配置宽度百分比
-            int y = (Minecraft.getMinecraft().displayHeight * BakaDanmakuConfig.general.posY) / 100; // 获取的配置高度百分比
+            double x = (Minecraft.getMinecraft().displayWidth * BakaDanmakuConfig.general.posX) / 100; // 获取的配置宽度百分比
+            double y = (Minecraft.getMinecraft().displayHeight * BakaDanmakuConfig.general.posY) / 100; // 获取的配置高度百分比
 
             gui.drawString(renderer, String.format(BakaDanmakuConfig.general.popularityStyle, String.valueOf(tmpPopularityCount)),
-                    x, y, BakaDanmakuConfig.general.color);
+                    (int) x, (int) y, BakaDanmakuConfig.general.color);
         }
     }
 }
