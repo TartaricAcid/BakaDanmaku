@@ -32,9 +32,11 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven { url 'http://maven.blamejared.com' }
 }
 
 dependencies {
+    deobfCompile 'CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.554'
 }
 
 processResources {

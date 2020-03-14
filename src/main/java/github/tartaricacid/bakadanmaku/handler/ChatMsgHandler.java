@@ -5,19 +5,24 @@ import github.tartaricacid.bakadanmaku.api.event.DanmakuEvent;
 import github.tartaricacid.bakadanmaku.api.event.GiftEvent;
 import github.tartaricacid.bakadanmaku.api.event.PopularityEvent;
 import github.tartaricacid.bakadanmaku.api.event.WelcomeEvent;
+import github.tartaricacid.bakadanmaku.compact.crafttweaker.action.GiftAction;
 import github.tartaricacid.bakadanmaku.config.BakaDanmakuConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static github.tartaricacid.bakadanmaku.compact.crafttweaker.action.GiftAction.giftActions;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = BakaDanmaku.MOD_ID)
 public class ChatMsgHandler {
@@ -79,6 +84,13 @@ public class ChatMsgHandler {
             if (!mGift.find() || BakaDanmakuConfig.blockFunction.blockGift.isEmpty()) {
                 player.sendMessage(new TextComponentString(String.format(BakaDanmakuConfig.chatMsg.giftStyle,
                         e.getPlatform(), e.getUser(), e.getGiftName(), e.getNum())));
+                if (giftActions.containsKey(e.getGiftName())) {
+                    for (GiftAction a : giftActions.get(e.getGiftName())) {
+                        if (e.getNum() >= a.num) {
+                            player.getServer().commandManager.executeCommand(player, a.command);
+                        }
+                    }
+                }
             }
         }
     }
