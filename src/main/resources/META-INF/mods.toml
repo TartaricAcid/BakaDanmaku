@@ -1,0 +1,8 @@
+modLoader="javafml" 
+loaderVersion="[25,)"
+[[mods]]
+    modId="bakadanmaku"
+    version="${file.jarVersion}"
+    displayName="Baka Danmaku"
+    authors="TartaricAcid"
+    description="A Live Danmaku Mod"
