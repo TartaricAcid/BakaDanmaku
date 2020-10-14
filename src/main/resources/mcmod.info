@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "bakadanmaku",
+    "name": "Baka Danmaku",
+    "description": "A Live Danmaku Mod",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "authorList": [
+      "TartaricAcid"
+    ]
+  }
+]
