@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "bakadanmaku",
+  "version": "${version}",
+  "name": "Baka Danmaku Mod",
+  "description": "A Live Danmaku Mod",
+  "authors": [
+    "TartaricAcid"
+  ],
+  "contact": {
+    "homepage": "https://www.mcbbs.net/thread-825439-1-1.html",
+    "sources": "https://github.com/TartaricAcid/BakaDanmaku"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.github.tartaricacid.bakadanmaku.BakaDanmaku"
+    ]
+  },
+  "mixins": [
+    "bakadanmaku.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.14.x",
+    "fabric-key-binding-api-v1": "*"
+  }
+}
