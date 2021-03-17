@@ -16,7 +16,7 @@ public class ConfigKey {
             "key.category.bakadanmaku"
     );
 
-    public static void onKeyboardInput() {
+    public static void registerKeyboardInput() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (CONFIG_KEY.wasPressed()) {
                 if (client.player != null) {

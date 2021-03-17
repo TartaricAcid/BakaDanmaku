@@ -58,9 +58,9 @@ public class BilibiliSite implements ISite {
     public void initMessage(WebSocketClient client) {
         int id = RoomId.getRealRoomId(config.getRoom().getId());
         if (id == -1) {
-            SendDanmakuEvent.EVENT.invoker().onSendDanmaku("房间获取失败！请检查是否输入错误，或者网络有问题");
+            SendDanmakuEvent.EVENT.invoker().register("房间获取失败！请检查是否输入错误，或者网络有问题");
         } else {
-            SendDanmakuEvent.EVENT.invoker().onSendDanmaku("房间获取成功！正在连接弹幕！");
+            SendDanmakuEvent.EVENT.invoker().register("房间获取成功！正在连接弹幕！");
         }
         byte[] message = String.format("{\"roomid\": %d}", id).getBytes(StandardCharsets.UTF_8);
         ByteBuf buf = Unpooled.buffer();
@@ -141,7 +141,7 @@ public class BilibiliSite implements ISite {
         try {
             String str = gson.fromJson(message, String.class);
             if (str != null) {
-                SendDanmakuEvent.EVENT.invoker().onSendDanmaku(str);
+                SendDanmakuEvent.EVENT.invoker().register(str);
             }
         } catch (JsonSyntaxException ignore) {
         }

@@ -5,15 +5,15 @@ import com.github.tartaricacid.bakadanmaku.event.post.PlayerLoggedOutEvent;
 import com.github.tartaricacid.bakadanmaku.utils.OpenCloseDanmaku;
 import net.minecraft.util.ActionResult;
 
-public class PlayerLogged {
-    public static void onEnterWorld() {
+public class PlayerLoggedEvent {
+    public static void registerEnterWorld() {
         PlayerLoggedInEvent.EVENT.register(() -> {
             OpenCloseDanmaku.openDanmaku();
             return ActionResult.SUCCESS;
         });
     }
 
-    public static void onLeaveWorld() {
+    public static void registerLeaveWorld() {
         PlayerLoggedOutEvent.EVENT.register(() -> {
             OpenCloseDanmaku.closeDanmaku();
             return ActionResult.SUCCESS;

@@ -1,6 +1,6 @@
 package com.github.tartaricacid.bakadanmaku;
 
-import com.github.tartaricacid.bakadanmaku.event.PlayerLogged;
+import com.github.tartaricacid.bakadanmaku.event.PlayerLoggedEvent;
 import com.github.tartaricacid.bakadanmaku.event.post.SendDanmakuEvent;
 import com.github.tartaricacid.bakadanmaku.input.ConfigKey;
 import com.github.tartaricacid.bakadanmaku.websocket.WebSocketClient;
@@ -20,9 +20,9 @@ public class BakaDanmaku implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(ConfigKey.CONFIG_KEY);
-        ConfigKey.onKeyboardInput();
-        SendDanmakuEvent.onSendDanmaku();
-        PlayerLogged.onEnterWorld();
-        PlayerLogged.onLeaveWorld();
+        ConfigKey.registerKeyboardInput();
+        SendDanmakuEvent.register();
+        PlayerLoggedEvent.registerEnterWorld();
+        PlayerLoggedEvent.registerLeaveWorld();
     }
 }

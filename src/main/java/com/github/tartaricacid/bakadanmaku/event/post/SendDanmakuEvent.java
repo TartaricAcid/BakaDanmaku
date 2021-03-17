@@ -10,7 +10,7 @@ public interface SendDanmakuEvent {
     Event<SendDanmakuEvent> EVENT = EventFactory.createArrayBacked(SendDanmakuEvent.class,
             listeners -> msg -> {
                 for (SendDanmakuEvent listener : listeners) {
-                    ActionResult result = listener.onSendDanmaku(msg);
+                    ActionResult result = listener.register(msg);
                     if (result != ActionResult.PASS) {
                         return result;
                     }
@@ -18,7 +18,7 @@ public interface SendDanmakuEvent {
                 return ActionResult.PASS;
             });
 
-    public static void onSendDanmaku() {
+    static void register() {
         SendDanmakuEvent.EVENT.register(str -> {
             if (MinecraftClient.getInstance().player != null) {
                 MinecraftClient.getInstance().player.sendMessage(new LiteralText(str), false);
@@ -27,5 +27,5 @@ public interface SendDanmakuEvent {
         });
     }
 
-    ActionResult onSendDanmaku(String msg);
+    ActionResult register(String msg);
 }

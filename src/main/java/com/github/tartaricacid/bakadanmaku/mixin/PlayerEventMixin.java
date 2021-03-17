@@ -16,7 +16,7 @@ public class PlayerEventMixin {
         PlayerLoggedInEvent.EVENT.invoker().onLoggedInEvent();
     }
 
-    @Inject(at = @At("HEAD"), method = "net/minecraft/server/PlayerManager.remove(Lnet/minecraft/server/network/ServerPlayerEntity;)V")
+    @Inject(at = @At("HEAD"), method = "remove(Lnet/minecraft/server/network/ServerPlayerEntity;)V")
     private void playerLoggedOut(CallbackInfo info) {
         PlayerLoggedOutEvent.EVENT.invoker().onLoggedOutEvent();
     }
