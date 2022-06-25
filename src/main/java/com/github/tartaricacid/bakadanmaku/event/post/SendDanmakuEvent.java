@@ -2,7 +2,10 @@ package com.github.tartaricacid.bakadanmaku.event.post;
 
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.ChatSender;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,9 +22,12 @@ public class SendDanmakuEvent extends Event {
     @SubscribeEvent
     public static void onSendDanmaku(SendDanmakuEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player != null) {
-            player.sendSystemMessage(Component.literal(event.getMessage()));
+        if (minecraft.gui != null) {
+            Registry<ChatType> chatTypes = RegistryAccess.BUILTIN.get().registryOrThrow(Registry.CHAT_TYPE_REGISTRY);
+            ChatType chatType = chatTypes.get(ChatType.CHAT);
+            if (chatType != null) {
+                minecraft.gui.handleSystemChat(chatType, Component.literal(event.getMessage()));
+            }
         }
     }
 
