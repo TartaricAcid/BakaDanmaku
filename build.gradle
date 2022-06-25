@@ -10,9 +10,9 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "2.0.0"
+version = "2.0.1"
 group = "com.github.tartaricacid"
-archivesBaseName = "bakadanmaku"
+archivesBaseName = "bakadanmaku-1.12.2"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
@@ -33,9 +33,9 @@ processResources {
     inputs.property "mcversion", project.minecraft.version
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-    
+
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
