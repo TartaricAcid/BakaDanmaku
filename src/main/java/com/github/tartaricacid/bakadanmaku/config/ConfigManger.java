@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ConfigManger {
-    private static final Path CONFIG_FOLDER = Minecraft.getInstance().gameDir.toPath().resolve("config").resolve(BakaDanmaku.MOD_ID);
+    private static final Path CONFIG_FOLDER = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve(BakaDanmaku.MOD_ID);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     public static BilibiliConfig getBilibiliConfig() {

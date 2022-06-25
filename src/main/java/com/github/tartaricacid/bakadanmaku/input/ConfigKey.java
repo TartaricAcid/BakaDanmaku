@@ -4,6 +4,7 @@ import com.github.tartaricacid.bakadanmaku.utils.OpenCloseDanmaku;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -13,7 +14,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
-import static net.minecraft.util.Util.field_240973_b_;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ConfigKey {
@@ -26,10 +26,10 @@ public class ConfigKey {
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        if (CONFIG_KEY.isPressed()) {
+        if (CONFIG_KEY.isDown()) {
             OpenCloseDanmaku.closeDanmaku();
             if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.sendMessage(new StringTextComponent("弹幕配置正在重载中……"), field_240973_b_);
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent("弹幕配置正在重载中……"), Util.NIL_UUID);
             }
             OpenCloseDanmaku.openDanmaku();
         }
