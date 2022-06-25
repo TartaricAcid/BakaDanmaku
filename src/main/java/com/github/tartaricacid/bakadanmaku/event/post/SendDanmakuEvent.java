@@ -3,6 +3,7 @@ package com.github.tartaricacid.bakadanmaku.event.post;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 
@@ -20,8 +21,8 @@ public interface SendDanmakuEvent {
 
     static void register() {
         SendDanmakuEvent.EVENT.register(str -> {
-            if (MinecraftClient.getInstance().player != null) {
-                MinecraftClient.getInstance().player.sendMessage(new LiteralText(str));
+            if (MinecraftClient.getInstance().inGameHud != null) {
+                MinecraftClient.getInstance().inGameHud.addChatMessage(MessageType.CHAT, new LiteralText(str));
             }
             return ActionResult.SUCCESS;
         });
