@@ -12,9 +12,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.0.0'
+version = '2.0.1'
 group = 'com.github.tartaricacid'
-archivesBaseName = 'bakadanmaku'
+archivesBaseName = 'bakadanmaku-1.14.4'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -58,7 +58,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.2.0'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.2.26'
 }
 
 jar {
