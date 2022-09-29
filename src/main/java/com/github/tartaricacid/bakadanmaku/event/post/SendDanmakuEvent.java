@@ -23,9 +23,15 @@ public interface SendDanmakuEvent {
     static void register() {
         SendDanmakuEvent.EVENT.register(str -> {
             if (MinecraftClient.getInstance().world != null) {
-                Registry<MessageType> registry = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.MESSAGE_TYPE_KEY);
-                MessageType messageType = registry.get(MessageType.CHAT);
-                MinecraftClient.getInstance().inGameHud.onGameMessage(messageType, Text.literal(str));
+                MinecraftClient client = MinecraftClient.getInstance();
+                try {
+                    Object messageHandler = client.getClass().getMethod("method_44714").invoke(client);
+                    messageHandler.getClass().getMethod("method_44736", Text.class, boolean.class).invoke(messageHandler, Text.literal(str), false);
+                } catch (Exception e) {
+                    Registry<MessageType> registry = client.world.getRegistryManager().get(Registry.MESSAGE_TYPE_KEY);
+                    MessageType messageType = registry.get(MessageType.CHAT);
+                    client.inGameHud.onGameMessage(messageType, Text.literal(str));
+                }
             }
             return ActionResult.SUCCESS;
         });
