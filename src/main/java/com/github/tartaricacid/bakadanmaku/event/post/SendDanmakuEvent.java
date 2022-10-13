@@ -22,11 +22,11 @@ public class SendDanmakuEvent extends Event {
     @SubscribeEvent
     public static void onSendDanmaku(SendDanmakuEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.gui != null) {
+        if (minecraft != null) {
             Registry<ChatType> chatTypes = RegistryAccess.BUILTIN.get().registryOrThrow(Registry.CHAT_TYPE_REGISTRY);
             ChatType chatType = chatTypes.get(ChatType.CHAT);
             if (chatType != null) {
-                minecraft.gui.handleSystemChat(chatType, Component.literal(event.getMessage()));
+                minecraft.getChatListener().handleSystemMessage(Component.literal(event.getMessage()), false);
             }
         }
     }

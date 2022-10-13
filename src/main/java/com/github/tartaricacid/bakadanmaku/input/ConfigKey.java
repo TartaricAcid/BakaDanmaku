@@ -23,7 +23,7 @@ public class ConfigKey {
             "key.category.bakadanmaku");
 
     @SubscribeEvent
-    public static void onKeyboardInput(InputEvent.KeyInputEvent event) {
+    public static void onKeyboardInput(InputEvent.Key event) {
         if (CONFIG_KEY.isDown()) {
             OpenCloseDanmaku.closeDanmaku();
             if (Minecraft.getInstance().player != null) {
