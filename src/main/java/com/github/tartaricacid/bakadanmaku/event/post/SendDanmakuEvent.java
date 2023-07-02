@@ -3,10 +3,8 @@ package com.github.tartaricacid.bakadanmaku.event.post;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.message.MessageType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.registry.Registry;
 
 public interface SendDanmakuEvent {
     Event<SendDanmakuEvent> EVENT = EventFactory.createArrayBacked(SendDanmakuEvent.class,
