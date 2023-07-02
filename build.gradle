@@ -13,7 +13,7 @@ archivesBaseName = 'bakadanmaku-1.19.2'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.19.4'
     runs {
         client {
             workingDirectory project.file('run')
@@ -56,8 +56,8 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.1'
-    implementation 'io.netty:netty-codec-http:4.1.77.Final'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.0'
+    minecraftLibrary 'io.netty:netty-codec-http:4.1.77.Final'
 }
 
 shadowJar {
