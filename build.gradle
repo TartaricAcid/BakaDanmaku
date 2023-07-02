@@ -8,12 +8,12 @@ plugins {
 
 version = '2.0.0'
 group = 'com.github.tartaricacid'
-archivesBaseName = 'bakadanmaku-1.19.2'
+archivesBaseName = 'bakadanmaku-1.20'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.19.4'
+    mappings channel: 'official', version: '1.20'
     runs {
         client {
             workingDirectory project.file('run')
@@ -56,7 +56,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.0'
+    minecraft 'net.minecraftforge:forge:1.20-46.0.14'
     minecraftLibrary 'io.netty:netty-codec-http:4.1.77.Final'
 }
 
