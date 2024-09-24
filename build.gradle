@@ -1,0 +1,154 @@
+// 调用的 gradle 插件
+plugins {
+    id 'java-library'
+
+    // 用于 eclipse 或者 idea 的插件
+    id 'eclipse'
+    id 'idea'
+
+    // 用于发布 maven 时所需的插件
+    id 'maven-publish'
+
+    // NeoForged 开发插件
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
+}
+
+// ALL 为下载 gradle 源码，方便查看调试
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+// 模组相关信息
+version = mod_version
+group = mod_group_id
+
+// 需要的前置库
+repositories {
+    mavenCentral()
+}
+
+// 打包成 jar 时的名称
+base {
+    archivesName = mod_id
+}
+
+// 需要 Java 21 版本
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// accessTransformers，注意 1.21 已经不再使用 srg 了
+// minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+
+// 运行部分
+runs {
+    configureEach {
+        // +AllowEnhancedClassRedefinition 为 JetBrains Runtime 所需的参数
+        // JetBrains Runtime 是一个修改过的 JDK，支持热重载
+        // +IgnoreUnrecognizedVMOptions 用于忽略未知指令
+        // 否则没有安装 JetBrains Runtime 的用户运行时会报错
+        jvmArguments = ['-XX:+IgnoreUnrecognizedVMOptions',
+                        '-XX:+AllowEnhancedClassRedefinition']
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+
+        dependencies {
+            runtime 'io.netty:netty-codec-http:4.1.108.Final'
+        }
+    }
+
+    client {
+        // 设置运行后玩家的名称
+        programArguments = ["--username", "mayday"]
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    // 新建 client2，方便本机进行互联调试
+    client2 {
+        configure "client"
+        // 单独放一个客户端文件夹
+        workingDirectory 'runs/client2'
+        programArguments = ["--username", "tartaric_acid"]
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    // 目前仅以 neoforge 作为前置
+    implementation "net.neoforged:neoforge:${neo_version}"
+
+    // Websocket 库
+    implementation 'io.netty:netty-codec-http:4.1.108.Final'
+
+    jarJar "io.netty:netty-codec-http:4.1.108.Final"
+}
+
+// 启用 jarJar
+jarJar.enable()
+
+// 用于 neoforge.mods 里替换那一堆 ${xxxx}
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+// Maven 发布，如果你不需要发布，这一段可以删掉
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+// 必须，编码需要显式指定为 UTF
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// 让 idea 主动下载前置库的源码和 Javadoc
+// 新版本 idea 默认不会下载这两个，这虽然加快了构建速度，但是不方便调试
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
