@@ -5,7 +5,7 @@ import com.github.tartaricacid.bakadanmaku.event.post.SendDanmakuEvent;
 import com.github.tartaricacid.bakadanmaku.event.post.UpdatePopularInfoEvent;
 import com.github.tartaricacid.bakadanmaku.site.ISite;
 import com.github.tartaricacid.bakadanmaku.utils.BilibiliMsgSplit;
-import com.github.tartaricacid.bakadanmaku.utils.Zlib;
+import com.github.tartaricacid.bakadanmaku.utils.Decompressor;
 import com.github.tartaricacid.bakadanmaku.websocket.WebSocketClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,6 +35,7 @@ public class BilibiliSite implements ISite {
     private static final int JSON_PROTOCOL_VERSION = 0;
     private static final int POPULAR_PROTOCOL_VERSION = 1;
     private static final int BUFFER_PROTOCOL_VERSION = 2;
+    private static final int BROTLI_PROTOCOL_VERSION = 3;
 
     private static final int HEART_BEAT_OPERATION = 2;
     private static final int POPULAR_OPERATION = 3;
@@ -57,13 +58,14 @@ public class BilibiliSite implements ISite {
 
     @Override
     public void initMessage(WebSocketClient client) {
-        int id = RoomId.getRealRoomId(config.getRoom().getId());
-        if (id == -1) {
+        byte[] message = WebSocketAuth.newAuth(config.getRoom());
+        if (message == null) {
             MinecraftForge.EVENT_BUS.post(new SendDanmakuEvent("房间获取失败！请检查是否输入错误，或者网络有问题"));
+            return;
         } else {
             MinecraftForge.EVENT_BUS.post(new SendDanmakuEvent("房间获取成功！正在连接弹幕！"));
         }
-        byte[] message = String.format("{\"roomid\": %d}", id).getBytes(StandardCharsets.UTF_8);
+
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(HEADER_LENGTH + message.length);
         buf.writeShort(HEADER_LENGTH);
@@ -102,6 +104,7 @@ public class BilibiliSite implements ISite {
                     //handPopularMessage(data);
                     return;
                 case BUFFER_PROTOCOL_VERSION:
+                case BROTLI_PROTOCOL_VERSION:
                     handBufferMessage(data);
                     return;
                 default:
@@ -130,7 +133,7 @@ public class BilibiliSite implements ISite {
         if (operation == MESSAGE_OPERATION) {
             byte[] uncompressedData = new byte[packetLength - BODY_OFFSET];
             data.getBytes(BODY_OFFSET, uncompressedData);
-            byte[] decompressData = Zlib.decompress(uncompressedData);
+            byte[] decompressData = Decompressor.tryDecompress(uncompressedData);
             byte[] msgBytes = Arrays.copyOfRange(decompressData, BODY_OFFSET, decompressData.length);
             String[] message = BilibiliMsgSplit.split(IOUtils.toString(msgBytes, StandardCharsets.UTF_8.toString()));
             for (String msg : message) {
