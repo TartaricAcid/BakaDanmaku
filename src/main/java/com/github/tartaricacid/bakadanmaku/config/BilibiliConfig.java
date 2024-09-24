@@ -3,6 +3,7 @@ package com.github.tartaricacid.bakadanmaku.config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 
 public class BilibiliConfig implements IConfig {
@@ -80,6 +81,21 @@ public class BilibiliConfig implements IConfig {
         @SerializedName("enable")
         private boolean enable = false;
 
+        /**
+         * 是否手动设置验证信息
+         */
+        @SerializedName("manual_auth")
+        private boolean manualAuth = false;
+
+        /**
+         * WebSocket 鉴权验证，即连接wss后所发送的第一条信息。${roomId} 为房间ID占位符
+         */
+        @SerializedName("auth")
+        private String auth = "{\"roomid\": ${roomId}}";
+
+        @SerializedName("cookie")
+        private Map<String, String> cookie;
+
         public int getId() {
             return id;
         }
@@ -94,6 +110,30 @@ public class BilibiliConfig implements IConfig {
 
         public void setEnable(boolean enable) {
             this.enable = enable;
+        }
+
+        public boolean isManualAuth() {
+            return manualAuth;
+        }
+
+        public void setManualAuth(boolean manualAuth) {
+            this.manualAuth = manualAuth;
+        }
+
+        public String getAuth() {
+            return auth;
+        }
+
+        public void setAuth(String auth) {
+            this.auth = auth;
+        }
+
+        public void setCookie(Map<String, String> cookie) {
+            this.cookie = cookie;
+        }
+
+        public Map<String, String> getCookie() {
+            return cookie;
         }
     }
 
