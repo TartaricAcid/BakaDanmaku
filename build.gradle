@@ -8,7 +8,7 @@ plugins {
 
 version = '2.1.0'
 group = 'com.github.tartaricacid'
-archivesBaseName = 'bakadanmaku-1.19.2'
+archivesBaseName = 'bakadanmaku-1.19.4'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
