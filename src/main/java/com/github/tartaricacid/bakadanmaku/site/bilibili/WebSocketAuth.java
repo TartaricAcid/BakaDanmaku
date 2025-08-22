@@ -75,6 +75,8 @@ public class WebSocketAuth {
             try {
                 conn.addRequestProperty("Cookie", cookie);
                 conn.setRequestMethod("GET");
+                conn.addRequestProperty("User-Agent", "Mozilla/5.0");
+                conn.addRequestProperty("Referer", "https://www.bilibili.com/");
                 String data = IOUtils.toString(conn.getInputStream());
                 JsonObject response = GSON.fromJson(data, JsonObject.class);
                 String token = response.getAsJsonObject("data").get("token").getAsString();

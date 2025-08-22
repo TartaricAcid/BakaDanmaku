@@ -18,7 +18,7 @@ import java.util.TreeMap;
 public class WbiSigner {
     private static final String NAV_URL = "https://api.bilibili.com/x/web-interface/nav";
     private static final Gson GSON = new Gson();
-    private static final PercentEscaper escaper = new PercentEscaper("", false);
+    private static final PercentEscaper escaper = new PercentEscaper("-_.~", false);
 
     private static final int[] MIXIN_KEY_ENC_TAB = new int[]{
             46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35,
@@ -30,13 +30,21 @@ public class WbiSigner {
     static String WbiSign(Map<String, String> params) {
         long wts = System.currentTimeMillis() / 1000L;
 
-        Map<String, String> copiedParams = new TreeMap<>(params);
-        String wRid = DigestUtils.md5Hex(encodeQuery(copiedParams) + getMixinKey());
+        String query = encodeQuery(params);
 
-        params.put("wts", String.valueOf(wts));
-        params.put("w_rid", wRid);
+        Map<String, String> forSign = new TreeMap<>();
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            String v = e.getValue() == null ? "" : e.getValue();
 
-        return encodeQuery(params);
+            v = v.replaceAll("[!'()*]", "");
+            forSign.put(e.getKey(), v);
+        }
+        forSign.put("wts", String.valueOf(wts));
+
+        String mixinKey = getMixinKey();
+        String wRid = DigestUtils.md5Hex((encodeQuery(forSign) + mixinKey).getBytes(StandardCharsets.UTF_8));
+
+        return query + "&wts=" + wts + "&w_rid=" + wRid;
     }
 
     static String encodeQuery(Map<String, String> params) {
