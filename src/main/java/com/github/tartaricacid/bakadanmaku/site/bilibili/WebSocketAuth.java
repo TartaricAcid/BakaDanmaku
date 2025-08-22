@@ -9,9 +9,10 @@ import org.apache.commons.io.IOUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class WebSocketAuth {
-    private static final String INIT_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=%d&type=0";
+    private static final String INIT_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo";
     private static final Gson GSON = new Gson();
     private static final String AUTH_FORMAT = "{\"uid\":%d,\"roomid\":%d,\"protover\":3,\"buvid\":\"%s\",\"platform\":\"web\",\"type\":2,\"key\":\"%s\"}";
 
@@ -65,7 +66,11 @@ public class WebSocketAuth {
 
         if (buvid3 == null) return null;
         try {
-            URL url = new URL(String.format(INIT_URL, roomInfo.getRoomId()));
+            HashMap<String, String> params = new HashMap<>();
+            params.put("id", String.valueOf(roomInfo.getRoomId()));
+            params.put("type", "0");
+
+            URL url = new URL(INIT_URL + "?" + WbiSigner.WbiSign(params));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
                 conn.addRequestProperty("Cookie", cookie);
