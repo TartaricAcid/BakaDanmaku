@@ -1,12 +1,13 @@
 package com.github.tartaricacid.bakadanmaku.site.bilibili;
 
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-
+import com.github.tartaricacid.bakadanmaku.BakaDanmaku;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.PercentEscaper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.common.net.PercentEscaper;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,11 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
-
+/**
+ * 参考自：<a href="https://socialsisteryi.github.io/bilibili-API-collect/docs/misc/sign/wbi.html">BAC Document：WBI 签名</a>
+ */
 public class WbiSigner {
+    private static final PercentEscaper ESCAPER = new PercentEscaper("-_.~", false);
     private static final String NAV_URL = "https://api.bilibili.com/x/web-interface/nav";
     private static final Gson GSON = new Gson();
-    private static final PercentEscaper escaper = new PercentEscaper("-_.~", false);
 
     private static final int[] MIXIN_KEY_ENC_TAB = new int[]{
             46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35,
@@ -27,7 +30,7 @@ public class WbiSigner {
             22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52
     };
 
-    static String WbiSign(Map<String, String> params) {
+    static String wbiSign(Map<String, String> params) {
         long wts = System.currentTimeMillis() / 1000L;
 
         String query = encodeQuery(params);
@@ -52,12 +55,14 @@ public class WbiSigner {
 
         boolean first = true;
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (!first) query.append('&');
+            if (!first) {
+                query.append('&');
+            }
             first = false;
 
-            query.append(escaper.escape(entry.getKey()))
+            query.append(ESCAPER.escape(entry.getKey()))
                     .append("=")
-                    .append(escaper.escape(entry.getValue()));
+                    .append(ESCAPER.escape(entry.getValue()));
         }
 
         return query.toString();
@@ -65,12 +70,12 @@ public class WbiSigner {
 
     static String getMixinKey() {
         try {
-            // 获取img_url和sub_url
+            // 获取 img_url 和 sub_url
             HttpURLConnection conn = (HttpURLConnection) new URL(NAV_URL).openConnection();
 
             conn.setRequestMethod("GET");
-            conn.addRequestProperty("User-Agent", "Mozilla/5.0");
-            conn.addRequestProperty("Referer", "https://www.bilibili.com/");
+            conn.addRequestProperty(HttpHeaders.USER_AGENT, "Mozilla/5.0");
+            conn.addRequestProperty(HttpHeaders.REFERER, "https://www.bilibili.com/");
 
             String data = IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
             conn.disconnect();
@@ -84,12 +89,14 @@ public class WbiSigner {
             String raw = imgKey + subKey;
             StringBuilder mixed = new StringBuilder();
             for (int idx : MIXIN_KEY_ENC_TAB) {
-                if (idx < raw.length()) mixed.append(raw.charAt(idx));
+                if (idx < raw.length()) {
+                    mixed.append(raw.charAt(idx));
+                }
             }
 
             return mixed.substring(0, 32);
         } catch (Exception e) {
-            e.printStackTrace();
+            BakaDanmaku.LOGGER.error(e);
         }
         return null;
     }
