@@ -6,9 +6,9 @@ plugins {
     id 'java'
 }
 
-version = '2.1.0'
+version = '2.1.1'
 group = 'com.github.tartaricacid'
-archivesBaseName = 'bakadanmaku-1.20'
+archivesBaseName = 'bakadanmaku-forge-1.20'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
