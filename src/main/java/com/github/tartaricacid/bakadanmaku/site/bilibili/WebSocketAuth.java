@@ -2,22 +2,28 @@ package com.github.tartaricacid.bakadanmaku.site.bilibili;
 
 import com.github.tartaricacid.bakadanmaku.BakaDanmaku;
 import com.github.tartaricacid.bakadanmaku.config.BilibiliConfig;
+import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class WebSocketAuth {
-    private static final String INIT_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=%d&type=0";
+    private static final String INIT_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo";
     private static final Gson GSON = new Gson();
     private static final String AUTH_FORMAT = "{\"uid\":%d,\"roomid\":%d,\"protover\":3,\"buvid\":\"%s\",\"platform\":\"web\",\"type\":2,\"key\":\"%s\"}";
 
     public static byte[] newAuth(BilibiliConfig.Room room) {
         RoomInfo roomInfo = RoomInfo.getRoomInfo(room.getId());
-        if (roomInfo == null) return null;
+        if (roomInfo == null) {
+            return null;
+        }
 
         if (room.isManualAuth()) {
             return room
@@ -48,7 +54,9 @@ public class WebSocketAuth {
                 buvid3 = room.getCookie().getOrDefault("buvid3", Buvid.getBuvid3(roomInfo.getRoomId()));
                 StringBuilder sb = new StringBuilder();
                 room.getCookie().forEach((k, v) -> {
-                    if ("buvid3".equals(k)) return;
+                    if ("buvid3".equals(k)) {
+                        return;
+                    }
                     try {
                         v = URLEncoder.encode(v, "UTF-8");
                     } catch (UnsupportedEncodingException ignored) {
@@ -60,17 +68,25 @@ public class WebSocketAuth {
                 BakaDanmaku.LOGGER.info("[BakaDanmaku] Login Be User");
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            BakaDanmaku.LOGGER.error(e);
         }
 
-        if (buvid3 == null) return null;
+        if (buvid3 == null) {
+            return null;
+        }
         try {
-            URL url = new URL(String.format(INIT_URL, roomInfo.getRoomId()));
+            HashMap<String, String> params = new HashMap<>();
+            params.put("id", String.valueOf(roomInfo.getRoomId()));
+            params.put("type", "0");
+
+            URL url = new URL(INIT_URL + "?" + WbiSigner.wbiSign(params));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
-                conn.addRequestProperty("Cookie", cookie);
+                conn.addRequestProperty(HttpHeaders.COOKIE, cookie);
                 conn.setRequestMethod("GET");
-                String data = IOUtils.toString(conn.getInputStream());
+                conn.addRequestProperty(HttpHeaders.USER_AGENT, "Mozilla/5.0");
+                conn.addRequestProperty(HttpHeaders.REFERER, "https://www.bilibili.com/");
+                String data = IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
                 JsonObject response = GSON.fromJson(data, JsonObject.class);
                 String token = response.getAsJsonObject("data").get("token").getAsString();
                 String auth = String.format(
@@ -81,7 +97,7 @@ public class WebSocketAuth {
                 conn.disconnect();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            BakaDanmaku.LOGGER.error(e);
         }
         return null;
     }
@@ -109,7 +125,7 @@ public class WebSocketAuth {
                         obj.get("b_4").getAsString()
                 );
             } catch (Exception e) {
-                e.printStackTrace();
+                BakaDanmaku.LOGGER.error(e);
             }
             return null;
         }
