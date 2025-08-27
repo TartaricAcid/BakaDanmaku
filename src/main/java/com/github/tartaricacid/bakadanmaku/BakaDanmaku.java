@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledFuture;
 public class BakaDanmaku {
     public static final String MOD_ID = "bakadanmaku";
     public static final String NAME = "Baka Danmaku";
-    public static final String VERSION = "2.0.0";
+    public static final String VERSION = "2.1.1";
     public static final Logger LOGGER = LogManager.getLogger();
     public static ScheduledFuture<?> HEART_BEAT_TASK = null;
     public static WebSocketClient WEBSOCKET_CLIENT = null;
