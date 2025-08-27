@@ -29,7 +29,7 @@ repositories {
 
 // 打包成 jar 时的名称
 base {
-    archivesName = mod_id
+    archivesName = mod_id + "-neoforge-1.21"
 }
 
 // 需要 Java 21 版本
