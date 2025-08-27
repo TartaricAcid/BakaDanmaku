@@ -10,9 +10,9 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "2.1.0"
+version = "2.1.1"
 group = "com.github.tartaricacid"
-archivesBaseName = "bakadanmaku-1.12.2"
+archivesBaseName = "bakadanmaku-forge-1.12.2"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
